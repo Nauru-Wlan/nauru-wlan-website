@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nauru-Wlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  /* =====================================================================
+     DESIGN-TOKENS
+  ===================================================================== */
+  :root{
+    --bg: #0b1220;
+    --surface: #121b2c;
+    --surface-2: #17223a;
+    --line: rgba(255,255,255,0.09);
+    --text: #eaf0fa;
+    --text-muted: #8ba0c2;
+    --accent: #38e6c8;
+    --accent-soft: rgba(56,230,200,0.12);
+    --accent-dim: #279c8a;
+    --radius: 10px;
+    --max: 1080px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', system-ui, sans-serif;
+    font-weight:600;
+    line-height:1.15;
+    margin:0;
+  }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 28px; }
+
+  /* ---------------- NAV ---------------- */
+  nav{ position:sticky; top:0; z-index:50; background:rgba(11,18,32,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:68px; }
+  .brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem; letter-spacing:0.01em; }
+  .brand span{ color:var(--accent); }
+  .nav-links{ display:flex; gap:32px; font-size:0.92rem; color:var(--text-muted); }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-cta{
+    background:var(--accent); color:#06231d; padding:10px 20px; border-radius:8px;
+    font-weight:600; font-size:0.9rem; transition:transform .15s ease, background .15s ease;
+  }
+  .nav-cta:hover{ background:#4ff2d4; transform:translateY(-1px); }
+
+  /* ---------------- HERO ---------------- */
+  .hero{ padding:96px 0 80px; }
+  .hero .wrap{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; }
+  .eyebrow{ color:var(--accent); font-size:0.85rem; font-weight:600; margin-bottom:18px; display:block; }
+  .hero h1{ font-size:clamp(2.1rem, 4vw, 3.2rem); letter-spacing:-0.01em; }
+  .hero h1 em{ font-style:normal; color:var(--accent); }
+  .hero p.lead{ margin-top:22px; color:var(--text-muted); font-size:1.08rem; max-width:46ch; }
+  .hero .cta-row{ margin-top:34px; display:flex; gap:16px; flex-wrap:wrap; }
+  .btn-primary{
+    background:var(--accent); color:#06231d; padding:14px 26px; border-radius:9px;
+    font-weight:600; font-size:0.98rem; display:inline-block; transition:transform .15s ease, background .15s ease;
+  }
+  .btn-primary:hover{ background:#4ff2d4; transform:translateY(-1px); }
+  .btn-ghost{
+    border:1px solid var(--line); color:var(--text); padding:14px 26px; border-radius:9px;
+    font-weight:500; font-size:0.98rem; display:inline-block; transition:border-color .15s ease, background .15s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--accent); background:var(--accent-soft); }
+
+  /* signal graphic */
+  .signal{ position:relative; height:320px; display:flex; align-items:center; justify-content:center; }
+  .signal .core{ width:18px; height:18px; border-radius:50%; background:var(--accent); box-shadow:0 0 24px 4px var(--accent-soft); z-index:2; }
+  .ring{ position:absolute; border:1px solid var(--accent-dim); border-radius:50%; opacity:0; animation:pulse 3.2s ease-out infinite; }
+  .ring.r1{ width:90px; height:90px; animation-delay:0s; }
+  .ring.r2{ width:170px; height:170px; animation-delay:0.8s; }
+  .ring.r3{ width:250px; height:250px; animation-delay:1.6s; }
+  .ring.r4{ width:320px; height:320px; animation-delay:2.4s; }
+  @keyframes pulse{
+    0%{ opacity:0.65; transform:scale(0.8); }
+    70%{ opacity:0; }
+    100%{ opacity:0; transform:scale(1.05); }
+  }
+  .signal .tag{
+    position:absolute; font-family:'Space Grotesk',sans-serif; font-size:0.72rem; color:var(--text-muted);
+    background:var(--surface); border:1px solid var(--line); padding:5px 10px; border-radius:20px;
+  }
+  .signal .tag.t1{ top:8%; left:6%; }
+  .signal .tag.t2{ bottom:14%; right:2%; }
+  .signal .tag.t3{ top:50%; right:-6%; }
+
+  /* ---------------- CONTEXT ---------------- */
+  .context{ padding:70px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--surface); }
+  .context .wrap{ max-width:680px; }
+  .context p{ font-size:1.28rem; font-family:'Space Grotesk',sans-serif; font-weight:500; line-height:1.5; color:var(--text); }
+  .context p.small{ margin-top:20px; font-family:'Inter',sans-serif; font-weight:400; font-size:1rem; color:var(--text-muted); }
+
+  /* ---------------- FEATURES ---------------- */
+  .features{ padding:90px 0; }
+  .features h2{ font-size:1.9rem; margin-bottom:52px; max-width:20ch; }
+  .feature-row{
+    display:grid; grid-template-columns:200px 1fr; gap:36px; padding:28px 0;
+    border-top:1px solid var(--line); align-items:start;
+  }
+  .feature-row:last-child{ border-bottom:1px solid var(--line); }
+  .feature-num{ font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:0.95rem; font-weight:600; }
+  .feature-row h3{ font-size:1.15rem; margin-bottom:8px; }
+  .feature-row p{ color:var(--text-muted); max-width:56ch; }
+
+  /* ---------------- TRUST ---------------- */
+  .trust{ padding:80px 0; background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .trust .wrap{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+  .trust h2{ font-size:1.7rem; margin-bottom:18px; }
+  .trust p{ color:var(--text-muted); }
+  .trust-list{ display:flex; flex-direction:column; gap:18px; }
+  .trust-item{
+    display:flex; gap:14px; align-items:flex-start; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+  }
+  .trust-item .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); margin-top:7px; flex-shrink:0; }
+  .trust-item a{ color:var(--accent); font-weight:500; }
+  .trust-item a:hover{ text-decoration:underline; }
+
+  /* ---------------- PRICING ---------------- */
+  .pricing{ padding:90px 0; }
+  .price-card{
+    background:linear-gradient(160deg, var(--surface-2), var(--surface));
+    border:1px solid var(--line); border-radius:16px; padding:48px;
+    display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center;
+  }
+  .price-card h2{ font-size:1.7rem; margin-bottom:12px; }
+  .price-card p{ color:var(--text-muted); max-width:48ch; }
+  .price-box{ text-align:center; }
+  .price-amount{ font-family:'Space Grotesk',sans-serif; font-size:2.6rem; font-weight:700; color:var(--accent); }
+  .price-note{ color:var(--text-muted); font-size:0.85rem; margin-top:4px; }
+  .price-box .btn-primary{ margin-top:18px; width:100%; }
+
+  /* ---------------- FAQ ---------------- */
+  .faq{ padding:90px 0; border-top:1px solid var(--line); }
+  .faq h2{ font-size:1.7rem; margin-bottom:40px; }
+  .faq-item{ padding:24px 0; border-bottom:1px solid var(--line); }
+  .faq-item h3{ font-size:1.05rem; margin-bottom:8px; font-weight:600; }
+  .faq-item p{ color:var(--text-muted); max-width:64ch; }
+
+  /* ---------------- FOOTER ---------------- */
+  footer{ padding:44px 0; border-top:1px solid var(--line); }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  footer .brand{ font-size:1rem; }
+  footer p{ color:var(--text-muted); font-size:0.85rem; }
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media (max-width:860px){
+    .hero .wrap{ grid-template-columns:1fr; }
+    .signal{ height:220px; order:-1; }
+    .trust .wrap{ grid-template-columns:1fr; }
+    .price-card{ grid-template-columns:1fr; text-align:left; }
+    .price-box{ text-align:left; }
+    .feature-row{ grid-template-columns:1fr; gap:8px; }
+    .nav-links{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =======================================================================
+     BEARBEITBARER INHALT
+     Alle Texte, Preise und Links stehen hier zentral. Einfach die Werte
+     zwischen den Anfuehrungszeichen aendern und die Datei speichern -
+     der Rest der Datei muss dafuer nicht angefasst werden.
+======================================================================= -->
+<script>
+const CONTENT = {
+  brandName: "Nauru-Wlan",
+
+  nav: {
+    links: [
+      { label: "Funktionen", href: "#funktionen" },
+      { label: "Sicherheit", href: "#sicherheit" },
+      { label: "Preis", href: "#preis" },
+      { label: "FAQ", href: "#faq" }
+    ],
+    ctaLabel: "Kontakt",
+    ctaHref: "#preis"
+  },
+
+  hero: {
+    eyebrow: "Windows-Tool",
+    headlineBefore: "Deine Netzwerk-Identitaet, ",
+    headlineAccent: "neu gemischt",
+    headlineAfter: "",
+    lead: "Ein Klick gibt deinem PC eine frische, zufaellige MAC-Adresse - ohne Wiederholungen, ohne Aufwand, jederzeit nachvollziehbar.",
+    ctaPrimaryLabel: "Preis ansehen",
+    ctaPrimaryHref: "#preis",
+    ctaSecondaryLabel: "Sicherheits-Check ansehen",
+    ctaSecondaryHref: "#sicherheit",
+    tag1: "LAN",
+    tag2: "WLAN",
+    tag3: "1 Klick"
+  },
+
+  context: {
+    quote: "Jedes Geraet sendet dieselbe Hardware-Kennung, jedes Mal wenn es sich verbindet.",
+    detail: "Die MAC-Adresse deines Netzwerkadapters bleibt normalerweise dauerhaft gleich - das macht dein Geraet in Netzwerken langfristig wiedererkennbar. Dieses Tool setzt sie per Knopfdruck neu, ohne dass du dich mit Geraete-Manager oder Registry auseinandersetzen musst."
+  },
+
+  features: [
+    {
+      title: "Ein Klick, fertig",
+      text: "Oeffnen, Button druecken, kurz warten. Kein technisches Vorwissen noetig."
+    },
+    {
+      title: "Nie dieselbe Adresse zweimal",
+      text: "Jede vergebene MAC-Adresse wird gespeichert, damit garantiert keine Wiederholung stattfindet."
+    },
+    {
+      title: "Aktualisiert sich selbststaendig",
+      text: "Neue Versionen werden automatisch geladen - auch im Hintergrund, ohne dass du etwas oeffnen musst."
+    },
+    {
+      title: "An dein Geraet gebunden",
+      text: "Jede Lizenz funktioniert auf genau einem PC - transparent und nachvollziehbar fuer beide Seiten."
+    }
+  ],
+
+  trust: {
+    heading: "Kein Grund fuer Misstrauen",
+    text: "Bei einem Tool, das Adminrechte braucht und sich selbst aktualisiert, ist Skepsis normal und berechtigt. Deshalb legen wir offen, was drinsteckt:",
+    items: [
+      {
+        text: "Unabhaengig geprueft von ueber 70 Antivirenprogrammen: ",
+        linkLabel: "Scan-Ergebnis ansehen",
+        linkHref: "https://www.virustotal.com/gui/file/f8f994eb5d868dac93d69d88492d29dc4959d5de24a93f73354298cfc9c672f7/detection"
+      },
+      {
+        text: "Der komplette Quellcode ist oeffentlich einsehbar: ",
+        linkLabel: "auf GitHub ansehen",
+        linkHref: "https://github.com/Nauru-Wlan/net-tool-dist"
+      },
+      {
+        text: "Reines Textskript - kann vor dem Ausfuehren jederzeit in Notepad geoeffnet und komplett gelesen werden.",
+        linkLabel: "",
+        linkHref: ""
+      }
+    ]
+  },
+
+  pricing: {
+    heading: "Zugang erhalten",
+    text: "Bezahle direkt per Krypto (BTC, LTC oder SOL). Nach Bestaetigung der Zahlung erhaeltst du deinen Lizenzschluessel und den Download automatisch auf der naechsten Seite.",
+    amount: "10€",
+    note: "einmalig, ein Geraet",
+    ctaLabel: "Jetzt kaufen",
+    apiUrl: "https://script.google.com/macros/s/AKfycbw0XvYlXlFoW7YwqrEaZhrmXVtBWdwK77b5K-sgLuY4RyweIoI2lU0V3Mohh9_868bM/exec",
+    discordFallbackHref: "https://discord.com/users/1548726102128599062",
+    discordFallbackLabel: "Lieber erst Fragen? Auf Discord melden"
+  },
+
+  faq: [
+    {
+      q: "Brauche ich technisches Wissen?",
+      a: "Nein. Installation und Nutzung bestehen jeweils aus einem Doppelklick."
+    },
+    {
+      q: "Funktioniert das auf jedem PC?",
+      a: "Das Tool ist fuer Windows 10 und 11 gebaut und funktioniert mit den meisten LAN- und WLAN-Adaptern."
+    },
+    {
+      q: "Was genau macht eine neue MAC-Adresse fuer mich?",
+      a: "Sie aendert die Hardware-Kennung, mit der sich dein Netzwerkadapter bei Routern und Netzwerken meldet. Das ist keine allgemeine Anonymisierung deiner Internetnutzung, sondern betrifft ausschliesslich diese lokale Geraete-Kennung."
+    },
+    {
+      q: "Kann ich den Schluessel weitergeben?",
+      a: "Jeder Lizenzschluessel ist fest an ein einzelnes Geraet gebunden und funktioniert nicht auf einem zweiten PC."
+    }
+  ],
+
+  footer: {
+    note: "Dieses Tool aendert eine lokale Geraete-Kennung und ersetzt keine VPN- oder Anonymisierungssoftware."
+  }
+};
+</script>
+
+<nav>
+  <div class="wrap" id="nav-wrap">
+    <div class="brand" id="nav-brand"></div>
+    <div class="nav-links" id="nav-links"></div>
+    <a class="nav-cta" id="nav-cta"></a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow" id="hero-eyebrow"></span>
+      <h1 id="hero-headline"></h1>
+      <p class="lead" id="hero-lead"></p>
+      <div class="cta-row">
+        <a class="btn-primary" id="hero-cta-primary"></a>
+        <a class="btn-ghost" id="hero-cta-secondary"></a>
+      </div>
+    </div>
+    <div class="signal">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="ring r4"></div>
+      <div class="core"></div>
+      <div class="tag t1" id="hero-tag1"></div>
+      <div class="tag t2" id="hero-tag2"></div>
+      <div class="tag t3" id="hero-tag3"></div>
+    </div>
+  </div>
+</section>
+
+<section class="context">
+  <div class="wrap">
+    <p id="context-quote"></p>
+    <p class="small" id="context-detail"></p>
+  </div>
+</section>
+
+<section class="features" id="funktionen">
+  <div class="wrap">
+    <h2>Was das Tool fuer dich uebernimmt</h2>
+    <div id="feature-list"></div>
+  </div>
+</section>
+
+<section class="trust" id="sicherheit">
+  <div class="wrap">
+    <div>
+      <h2 id="trust-heading"></h2>
+      <p id="trust-text"></p>
+    </div>
+    <div class="trust-list" id="trust-list"></div>
+  </div>
+</section>
+
+<section class="pricing" id="preis">
+  <div class="wrap">
+    <div class="price-card">
+      <div>
+        <h2 id="pricing-heading"></h2>
+        <p id="pricing-text"></p>
+      </div>
+      <div class="price-box">
+        <div class="price-amount" id="pricing-amount"></div>
+        <div class="price-note" id="pricing-note"></div>
+        <a class="btn-primary" id="pricing-cta"></a>
+        <div style="margin-top:14px;">
+          <a id="pricing-discord-fallback" style="font-size:0.85rem; color:var(--text-muted);" target="_blank" rel="noopener"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <h2>Haeufige Fragen</h2>
+    <div id="faq-list"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand" id="footer-brand"></div>
+    <p id="footer-note"></p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('nav-brand').innerHTML = CONTENT.brandName;
+  document.getElementById('footer-brand').textContent = CONTENT.brandName;
+  document.getElementById('footer-note').textContent = CONTENT.footer.note;
+
+  const navLinks = document.getElementById('nav-links');
+  CONTENT.nav.links.forEach(l => {
+    const a = document.createElement('a');
+    a.href = l.href; a.textContent = l.label;
+    navLinks.appendChild(a);
+  });
+  const navCta = document.getElementById('nav-cta');
+  navCta.href = CONTENT.nav.ctaHref;
+  navCta.textContent = CONTENT.nav.ctaLabel;
+
+  document.getElementById('hero-eyebrow').textContent = CONTENT.hero.eyebrow;
+  document.getElementById('hero-headline').innerHTML =
+    CONTENT.hero.headlineBefore + '<em>' + CONTENT.hero.headlineAccent + '</em>' + CONTENT.hero.headlineAfter;
+  document.getElementById('hero-lead').textContent = CONTENT.hero.lead;
+  const heroPrimary = document.getElementById('hero-cta-primary');
+  heroPrimary.href = CONTENT.hero.ctaPrimaryHref; heroPrimary.textContent = CONTENT.hero.ctaPrimaryLabel;
+  const heroSecondary = document.getElementById('hero-cta-secondary');
+  heroSecondary.href = CONTENT.hero.ctaSecondaryHref; heroSecondary.textContent = CONTENT.hero.ctaSecondaryLabel;
+  document.getElementById('hero-tag1').textContent = CONTENT.hero.tag1;
+  document.getElementById('hero-tag2').textContent = CONTENT.hero.tag2;
+  document.getElementById('hero-tag3').textContent = CONTENT.hero.tag3;
+
+  document.getElementById('context-quote').textContent = CONTENT.context.quote;
+  document.getElementById('context-detail').textContent = CONTENT.context.detail;
+
+  const featureList = document.getElementById('feature-list');
+  CONTENT.features.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'feature-row';
+    row.innerHTML = `
+      <div class="feature-num">0${i+1}</div>
+      <div>
+        <h3>${f.title}</h3>
+        <p>${f.text}</p>
+      </div>`;
+    featureList.appendChild(row);
+  });
+
+  document.getElementById('trust-heading').textContent = CONTENT.trust.heading;
+  document.getElementById('trust-text').textContent = CONTENT.trust.text;
+  const trustList = document.getElementById('trust-list');
+  CONTENT.trust.items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'trust-item';
+    const linkHtml = item.linkLabel
+      ? `<a href="${item.linkHref}" target="_blank" rel="noopener">${item.linkLabel}</a>`
+      : '';
+    el.innerHTML = `<div class="dot"></div><p>${item.text}${linkHtml}</p>`;
+    trustList.appendChild(el);
+  });
+
+  document.getElementById('pricing-heading').textContent = CONTENT.pricing.heading;
+  document.getElementById('pricing-text').textContent = CONTENT.pricing.text;
+  document.getElementById('pricing-amount').textContent = CONTENT.pricing.amount;
+  document.getElementById('pricing-note').textContent = CONTENT.pricing.note;
+
+  const pricingCta = document.getElementById('pricing-cta');
+  pricingCta.textContent = CONTENT.pricing.ctaLabel;
+  pricingCta.href = "#";
+  pricingCta.addEventListener('click', async (evt) => {
+    evt.preventDefault();
+    const originalLabel = pricingCta.textContent;
+    pricingCta.textContent = "Wird vorbereitet ...";
+    pricingCta.style.pointerEvents = "none";
+    try {
+      const res = await fetch(`${CONTENT.pricing.apiUrl}?action=create_order`);
+      const data = await res.json();
+      if (data.invoiceUrl) {
+        window.location.href = data.invoiceUrl;
+      } else {
+        throw new Error("no invoice url");
+      }
+    } catch (err) {
+      pricingCta.textContent = originalLabel;
+      pricingCta.style.pointerEvents = "auto";
+      alert("Die Bestellung konnte nicht gestartet werden. Bitte versuche es erneut oder melde dich ueber Discord.");
+    }
+  });
+
+  const discordFallback = document.getElementById('pricing-discord-fallback');
+  discordFallback.href = CONTENT.pricing.discordFallbackHref;
+  discordFallback.textContent = CONTENT.pricing.discordFallbackLabel;
+
+  const faqList = document.getElementById('faq-list');
+  CONTENT.faq.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'faq-item';
+    el.innerHTML = `<h3>${item.q}</h3><p>${item.a}</p>`;
+    faqList.appendChild(el);
+  });
+</script>
+
+</body>
+</html>

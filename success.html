@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestellung - Nauru-Wlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1220; --surface:#121b2c; --surface-2:#17223a; --line:rgba(255,255,255,0.09);
+    --text:#eaf0fa; --text-muted:#8ba0c2; --accent:#38e6c8; --accent-soft:rgba(56,230,200,0.12);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--text); min-height:100vh;
+    font-family:'Inter', system-ui, sans-serif; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  h1,h2{ font-family:'Space Grotesk', system-ui, sans-serif; margin:0; }
+  .card{
+    max-width:480px; width:100%; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; padding:44px; text-align:center;
+  }
+  .spinner{
+    width:40px; height:40px; border-radius:50%; border:3px solid var(--line);
+    border-top-color:var(--accent); margin:0 auto 24px; animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .spinner{ animation:none; } }
+  h2{ font-size:1.4rem; margin-bottom:12px; }
+  p{ color:var(--text-muted); line-height:1.6; margin:0 0 8px; }
+  .license-box{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    padding:16px; margin:22px 0; font-family:'Space Grotesk',monospace; font-size:1rem;
+    letter-spacing:0.03em; word-break:break-all; color:var(--accent); display:none;
+  }
+  .btn{
+    display:inline-block; background:var(--accent); color:#06231d; padding:14px 28px;
+    border-radius:9px; font-weight:600; margin-top:8px; text-decoration:none;
+  }
+  .info{ text-align:left; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:20px; margin-top:26px; display:none; }
+  .info h3{ font-size:0.95rem; margin-bottom:10px; color:var(--text); }
+  .info ol{ margin:0; padding-left:20px; color:var(--text-muted); font-size:0.92rem; line-height:1.7; }
+  .info .support{ margin-top:14px; font-size:0.88rem; color:var(--text-muted); }
+  .error{ color:#ff8a8a; display:none; }
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="pending-view">
+    <div class="spinner"></div>
+    <h2>Zahlung wird geprueft ...</h2>
+    <p>Das kann je nach Kryptowaehrung ein paar Minuten dauern, bis genuegend Bestaetigungen vorliegen.</p>
+    <p>Dieses Fenster bitte offen lassen - es aktualisiert sich automatisch.</p>
+  </div>
+
+  <div id="paid-view" class="hidden">
+    <h2>Zahlung bestaetigt</h2>
+    <p>Dein Lizenzschluessel:</p>
+    <div class="license-box" id="license-key"></div>
+    <a class="btn" id="download-btn" href="#">Tool herunterladen</a>
+
+    <div class="info" id="info-box">
+      <h3>So geht's weiter</h3>
+      <ol>
+        <li>ZIP-Datei entpacken</li>
+        <li>Doppelklick auf "Installieren.vbs" ausfuehren</li>
+        <li>Beim ersten Start des Tools den obigen Lizenzschluessel eingeben</li>
+        <li>Die Datei "Anleitung.txt" in der ZIP enthaelt alle weiteren Details</li>
+      </ol>
+      <p class="support">Bei Problemen oder Fragen: einfach ueber Discord melden.</p>
+    </div>
+  </div>
+
+  <div id="error-view" class="hidden">
+    <h2>Bestellung nicht gefunden</h2>
+    <p class="error">Diese Bestellung konnte nicht gefunden werden. Falls du bereits bezahlt hast, melde dich bitte ueber Discord.</p>
+  </div>
+</div>
+
+<script>
+  // =====================================================================
+  // BEARBEITBAR: API-URL deines Apps-Script-Servers
+  // =====================================================================
+  const API_URL = "https://script.google.com/macros/s/AKfycbw0XvYlXlFoW7YwqrEaZhrmXVtBWdwK77b5K-sgLuY4RyweIoI2lU0V3Mohh9_868bM/exec";
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("orderId");
+
+  const pendingView = document.getElementById("pending-view");
+  const paidView = document.getElementById("paid-view");
+  const errorView = document.getElementById("error-view");
+  const licenseKeyBox = document.getElementById("license-key");
+  const downloadBtn = document.getElementById("download-btn");
+  const infoBox = document.getElementById("info-box");
+
+  if (!orderId) {
+    pendingView.classList.add("hidden");
+    errorView.classList.remove("hidden");
+  } else {
+    checkStatus();
+  }
+
+  function checkStatus() {
+    fetch(`${API_URL}?action=check_order&orderId=${encodeURIComponent(orderId)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === "paid") {
+          pendingView.classList.add("hidden");
+          paidView.classList.remove("hidden");
+          licenseKeyBox.style.display = "block";
+          licenseKeyBox.textContent = data.licenseKey;
+          downloadBtn.href = data.downloadUrl;
+          infoBox.style.display = "block";
+
+          downloadBtn.addEventListener("click", () => {
+            setTimeout(() => { infoBox.scrollIntoView({ behavior: "smooth" }); }, 500);
+          });
+        } else if (data.status === "not_found") {
+          pendingView.classList.add("hidden");
+          errorView.classList.remove("hidden");
+        } else {
+          setTimeout(checkStatus, 5000);
+        }
+      })
+      .catch(() => {
+        setTimeout(checkStatus, 8000);
+      });
+  }
+</script>
+
+</body>
+</html>
