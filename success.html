@@ -44,6 +44,8 @@
   .info ol{ margin:0; padding-left:20px; color:var(--text-muted); font-size:0.92rem; line-height:1.7; }
   .info .support{ margin-top:14px; font-size:0.88rem; color:var(--text-muted); }
   .error{ color:#ff8a8a; display:none; }
+  .order-ref{ font-size:0.85rem; margin-top:18px; word-break:break-all; }
+  .order-ref span{ font-family:'Space Grotesk',monospace; color:var(--text); }
   .hidden{ display:none; }
 </style>
 </head>
@@ -75,6 +77,13 @@
     </div>
   </div>
 
+  <div id="problem-view" class="hidden">
+    <h2 id="problem-title"></h2>
+    <p id="problem-text"></p>
+    <p class="order-ref">Bestell-ID: <span id="problem-order-id"></span></p>
+    <a class="btn" id="problem-btn" href="index.html">Zurueck zur Startseite</a>
+  </div>
+
   <div id="error-view" class="hidden">
     <h2>Bestellung nicht gefunden</h2>
     <p class="error">Diese Bestellung konnte nicht gefunden werden. Falls du bereits bezahlt hast, melde dich bitte ueber Discord.</p>
@@ -96,6 +105,35 @@
   const licenseKeyBox = document.getElementById("license-key");
   const downloadBtn = document.getElementById("download-btn");
   const infoBox = document.getElementById("info-box");
+  const problemView = document.getElementById("problem-view");
+
+  const PROBLEMS = {
+    expired: {
+      title: "Zahlung abgelaufen",
+      text: "Die Zahlungsfrist ist abgelaufen, es wurde nichts abgebucht. Du kannst jederzeit eine neue Bestellung starten. Falls du doch bezahlt hast, melde dich bitte ueber Discord und nenne die Bestell-ID unten.",
+      retry: true
+    },
+    failed: {
+      title: "Zahlung fehlgeschlagen",
+      text: "Die Zahlung konnte nicht abgeschlossen werden. Du kannst eine neue Bestellung starten. Falls Geld abgebucht wurde, melde dich bitte ueber Discord und nenne die Bestell-ID unten.",
+      retry: true
+    },
+    partially_paid: {
+      title: "Zahlung unvollstaendig",
+      text: "Es ist bisher nur ein Teil des Betrags eingegangen. Bitte sende den fehlenden Restbetrag an dieselbe Adresse - diese Seite aktualisiert sich automatisch. Bei Fragen melde dich ueber Discord und nenne die Bestell-ID unten.",
+      retry: false
+    }
+  };
+
+  function showProblem(status) {
+    const p = PROBLEMS[status];
+    pendingView.classList.add("hidden");
+    problemView.classList.remove("hidden");
+    document.getElementById("problem-title").textContent = p.title;
+    document.getElementById("problem-text").textContent = p.text;
+    document.getElementById("problem-order-id").textContent = orderId;
+    document.getElementById("problem-btn").style.display = p.retry ? "inline-block" : "none";
+  }
 
   if (!orderId) {
     pendingView.classList.add("hidden");
@@ -110,6 +148,7 @@
       .then(data => {
         if (data.status === "paid") {
           pendingView.classList.add("hidden");
+          problemView.classList.add("hidden");
           paidView.classList.remove("hidden");
           licenseKeyBox.style.display = "block";
           licenseKeyBox.textContent = data.licenseKey;
@@ -122,6 +161,11 @@
         } else if (data.status === "not_found") {
           pendingView.classList.add("hidden");
           errorView.classList.remove("hidden");
+        } else if (data.status === "expired" || data.status === "failed") {
+          showProblem(data.status);
+        } else if (data.status === "partially_paid") {
+          showProblem("partially_paid");
+          setTimeout(checkStatus, 10000);
         } else {
           setTimeout(checkStatus, 5000);
         }
