@@ -2,178 +2,226 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nauru-Wlan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A2FA0">
+<meta name="description" content="Nauru-Wlan: Windows-Tool, das per Klick eine neue, zufällige MAC-Adresse für LAN oder WLAN setzt. Einmalig 10 €, Bezahlung per Krypto.">
+<title>Nauru-Wlan – Neue MAC-Adresse per Klick</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" id="favicon" href="data:,">
 <style>
 
   /* =====================================================================
      DESIGN-TOKENS
+     Farben stammen von der Nauru-Flagge: Ultramarin, Goldstreifen, Weiss.
   ===================================================================== */
   :root{
-    --bg: #0b1220;
-    --surface: #121b2c;
-    --surface-2: #17223a;
-    --line: rgba(255,255,255,0.09);
-    --text: #eaf0fa;
-    --text-muted: #8ba0c2;
-    --accent: #38e6c8;
-    --accent-soft: rgba(56,230,200,0.12);
-    --accent-dim: #279c8a;
-    --radius: 10px;
-    --max: 1080px;
+    --blau:   #1A2FA0;
+    --tief:   #0B1657;
+    --ink:    #0C1240;
+    --gold:   #F4C22B;
+    --papier: #EEF0F5;
+    --etikett:#FBFAF6;
+    --muted:  #4A5178;
+    --on-blue:#FFFFFF;
+    --on-blue-muted: rgba(255,255,255,.76);
+    --line-light: rgba(12,18,64,.18);
+    --line-dark:  rgba(255,255,255,.22);
+    --sans: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --max: 1160px;
+    --focus: var(--gold);
   }
 
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter', system-ui, sans-serif;
-    font-size:16px;
-    line-height:1.6;
+    margin:0; background:var(--papier); color:var(--ink);
+    font-family:var(--sans); font-optical-sizing:auto;
+    font-size:1.0625rem; line-height:1.62;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{
-    font-family:'Space Grotesk', system-ui, sans-serif;
-    font-weight:600;
-    line-height:1.15;
-    margin:0;
-  }
+  h1,h2,h3{ margin:0; line-height:1.06; letter-spacing:-.025em; font-weight:750; text-wrap:balance; }
   p{ margin:0; }
-  a{ color:inherit; text-decoration:none; }
-  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  a{ color:inherit; }
+  :focus-visible{ outline:3px solid var(--focus); outline-offset:3px; border-radius:4px; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 28px; }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  section[id]{ scroll-margin-top:72px; }
 
   @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+    html{ scroll-behavior:auto; }
+    *{ animation:none !important; transition:none !important; }
   }
 
-  .wrap{ max-width:var(--max); margin:0 auto; padding:0 28px; }
+  /* ---------------- BUTTONS ---------------- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font:inherit; font-weight:650; font-size:1rem; letter-spacing:-.005em;
+    padding:14px 24px; border-radius:10px; border:2px solid transparent;
+    cursor:pointer; text-decoration:none; transition:background .15s, color .15s, border-color .15s;
+  }
+  .btn-gold{ background:var(--gold); color:var(--ink); }
+  .btn-gold:hover{ background:#FFD24D; }
+  .btn-line{ border-color:var(--line-dark); color:var(--on-blue); }
+  .btn-line:hover{ border-color:var(--on-blue); }
+  .btn-ink{ background:var(--ink); color:#fff; }
+  .btn-ink:hover{ background:#1B2470; }
+  .btn:disabled{ opacity:.55; cursor:default; }
 
   /* ---------------- NAV ---------------- */
-  nav{ position:sticky; top:0; z-index:50; background:rgba(11,18,32,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
-  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:68px; }
-  .brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem; letter-spacing:0.01em; }
-  .brand span{ color:var(--accent); }
-  .nav-links{ display:flex; gap:32px; font-size:0.92rem; color:var(--text-muted); }
-  .nav-links a:hover{ color:var(--text); }
-  .nav-cta{
-    background:var(--accent); color:#06231d; padding:10px 20px; border-radius:8px;
-    font-weight:600; font-size:0.9rem; transition:transform .15s ease, background .15s ease;
-  }
-  .nav-cta:hover{ background:#4ff2d4; transform:translateY(-1px); }
+  .nav{ position:sticky; top:0; z-index:50; background:var(--blau); color:var(--on-blue); border-bottom:1px solid var(--line-dark); }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:66px; gap:24px; }
+  .brand{ display:inline-flex; align-items:center; gap:10px; font-weight:750; font-size:1.2rem; letter-spacing:-.02em; text-decoration:none; }
+  .brand svg{ display:block; }
+  .nav-links{ display:flex; gap:30px; font-size:.95rem; color:var(--on-blue-muted); margin-left:auto; }
+  .nav-links a{ text-decoration:none; }
+  .nav-links a:hover{ color:#fff; text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px; }
+  .nav-cta{ padding:10px 20px; font-size:.95rem; }
 
   /* ---------------- HERO ---------------- */
-  .hero{ padding:96px 0 80px; }
-  .hero .wrap{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; }
-  .eyebrow{ color:var(--accent); font-size:0.85rem; font-weight:600; margin-bottom:18px; display:block; }
-  .hero h1{ font-size:clamp(2.1rem, 4vw, 3.2rem); letter-spacing:-0.01em; }
-  .hero h1 em{ font-style:normal; color:var(--accent); }
-  .hero p.lead{ margin-top:22px; color:var(--text-muted); font-size:1.08rem; max-width:46ch; }
-  .hero .cta-row{ margin-top:34px; display:flex; gap:16px; flex-wrap:wrap; }
-  .btn-primary{
-    background:var(--accent); color:#06231d; padding:14px 26px; border-radius:9px;
-    font-weight:600; font-size:0.98rem; display:inline-block; transition:transform .15s ease, background .15s ease;
-  }
-  .btn-primary:hover{ background:#4ff2d4; transform:translateY(-1px); }
-  .btn-ghost{
-    border:1px solid var(--line); color:var(--text); padding:14px 26px; border-radius:9px;
-    font-weight:500; font-size:0.98rem; display:inline-block; transition:border-color .15s ease, background .15s ease;
-  }
-  .btn-ghost:hover{ border-color:var(--accent); background:var(--accent-soft); }
+  .hero{ position:relative; background:var(--blau); color:var(--on-blue); padding:clamp(56px,8vw,104px) 0 clamp(80px,10vw,128px); overflow:hidden; }
+  .hero::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:9px; background:var(--gold); }
+  .hero-grid{ display:grid; grid-template-columns:5fr 6fr; gap:clamp(36px,5vw,72px); align-items:center; }
+  .hero h1{ font-size:clamp(2.2rem,3.7vw,3.4rem); font-weight:800; letter-spacing:-.035em; line-height:1.02; }
+  .hero h1 span{ display:block; }
+  .hero .lead{ margin-top:26px; font-size:1.15rem; color:var(--on-blue-muted); max-width:44ch; }
+  .cta-row{ margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; }
 
-  /* signal graphic */
-  .signal{ position:relative; height:320px; display:flex; align-items:center; justify-content:center; }
-  .signal .core{ width:18px; height:18px; border-radius:50%; background:var(--accent); box-shadow:0 0 24px 4px var(--accent-soft); z-index:2; }
-  .ring{ position:absolute; border:1px solid var(--accent-dim); border-radius:50%; opacity:0; animation:pulse 3.2s ease-out infinite; }
-  .ring.r1{ width:90px; height:90px; animation-delay:0s; }
-  .ring.r2{ width:170px; height:170px; animation-delay:0.8s; }
-  .ring.r3{ width:250px; height:250px; animation-delay:1.6s; }
-  .ring.r4{ width:320px; height:320px; animation-delay:2.4s; }
-  @keyframes pulse{
-    0%{ opacity:0.65; transform:scale(0.8); }
-    70%{ opacity:0; }
-    100%{ opacity:0; transform:scale(1.05); }
+  .demo{ min-width:0; }
+  .sticker{
+    container-type:inline-size;
+    background:var(--etikett); color:var(--ink);
+    border-radius:14px; padding:20px 26px 22px;
+    transform:rotate(-1.4deg);
+    box-shadow:0 30px 50px -22px rgba(2,6,36,.6);
   }
-  .signal .tag{
-    position:absolute; font-family:'Space Grotesk',sans-serif; font-size:0.72rem; color:var(--text-muted);
-    background:var(--surface); border:1px solid var(--line); padding:5px 10px; border-radius:20px;
+  .sticker-head{
+    display:flex; justify-content:space-between; gap:12px;
+    padding-bottom:12px; border-bottom:1.5px dashed rgba(12,18,64,.28);
+    font-size:.86rem; font-weight:600; color:var(--muted);
   }
-  .signal .tag.t1{ top:8%; left:6%; }
-  .signal .tag.t2{ bottom:14%; right:2%; }
-  .signal .tag.t3{ top:50%; right:-6%; }
+  .mac{
+    font-family:var(--mono); font-weight:600; white-space:nowrap;
+    font-size:clamp(1.15rem,4.2vw,2.3rem);
+    font-size:7.1cqw;
+    letter-spacing:-.03em; line-height:1; margin:22px 0 18px;
+  }
+  .mac i{ font-style:normal; color:rgba(12,18,64,.35); }
+  .mac .nib{ background:var(--gold); padding:0 .04em; border-radius:3px; }
+  .barcode{ display:block; width:100%; height:44px; fill:var(--ink); }
+  .sticker-foot{ display:flex; align-items:center; gap:18px; margin-top:20px; flex-wrap:wrap; }
+  .sticker-foot p{ font-size:.86rem; line-height:1.45; color:var(--muted); flex:1; min-width:190px; }
+  .ledger{ margin-top:34px; padding-left:6px; }
+  .ledger-title{ font-size:.92rem; font-weight:600; color:var(--on-blue-muted); }
+  .ledger ol{ list-style:none; margin:10px 0 0; padding:0; font-family:var(--mono); font-size:.9rem; }
+  .ledger li{ padding:5px 0; text-decoration:line-through; text-decoration-color:var(--gold); text-decoration-thickness:2px; color:rgba(255,255,255,.9); }
+  .ledger li:nth-child(2){ opacity:.7; } .ledger li:nth-child(3){ opacity:.5; } .ledger li:nth-child(4){ opacity:.32; }
+  .ledger .empty{ text-decoration:none; font-family:var(--sans); font-size:.92rem; color:var(--on-blue-muted); opacity:1; max-width:44ch; }
 
-  /* ---------------- CONTEXT ---------------- */
-  .context{ padding:70px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--surface); }
-  .context .wrap{ max-width:680px; }
-  .context p{ font-size:1.28rem; font-family:'Space Grotesk',sans-serif; font-weight:500; line-height:1.5; color:var(--text); }
-  .context p.small{ margin-top:20px; font-family:'Inter',sans-serif; font-weight:400; font-size:1rem; color:var(--text-muted); }
+  /* ---------------- WARUM ---------------- */
+  .why{ padding:clamp(72px,10vw,128px) 0; --focus:var(--blau); }
+  .hero-grid > *, .why-grid > *, .trust-grid > *, .price-grid > *, .faq-grid > *{ min-width:0; }
+  .why-grid{ display:grid; grid-template-columns:5fr 6fr; gap:clamp(36px,6vw,88px); align-items:start; }
+  .why h2{ font-size:clamp(1.9rem,3.4vw,2.9rem); }
+  .why .text{ margin-top:22px; color:var(--muted); max-width:52ch; }
+  .table-scroll{ overflow-x:auto; }
+  .cmp{ width:100%; border-collapse:collapse; }
+  .cmp th{ text-align:left; font-weight:650; font-size:.95rem; padding:0 20px 14px 0; color:var(--muted); white-space:nowrap; }
+  .cmp tbody th{ color:var(--ink); font-size:1rem; padding:18px 20px 18px 0; }
+  .cmp td{ padding:18px 20px 18px 0; border-top:1.5px solid var(--line-light); }
+  .cmp tbody th{ border-top:1.5px solid var(--line-light); }
+  .cmp .m{ font-family:var(--mono); font-size:.86rem; white-space:nowrap; }
+  .cmp .same{ background:linear-gradient(transparent 60%, rgba(244,194,43,.85) 60%); }
+  .cmp-note{ margin-top:14px; font-size:.9rem; color:var(--muted); }
 
-  /* ---------------- FEATURES ---------------- */
-  .features{ padding:90px 0; }
-  .features h2{ font-size:1.9rem; margin-bottom:52px; max-width:20ch; }
-  .feature-row{
-    display:grid; grid-template-columns:200px 1fr; gap:36px; padding:28px 0;
-    border-top:1px solid var(--line); align-items:start;
+  /* ---------------- FUNKTIONEN + ABLAUF ---------------- */
+  .features{ padding:0 0 clamp(72px,10vw,128px); --focus:var(--blau); }
+  .features h2, .steps-wrap h2{ font-size:clamp(1.7rem,3vw,2.5rem); margin-bottom:40px; }
+  .feat-grid{ display:grid; grid-template-columns:1fr 1fr; column-gap:64px; }
+  .feat{ border-top:2px solid var(--ink); padding:20px 0 40px; }
+  .feat h3{ font-size:1.45rem; letter-spacing:-.018em; margin-bottom:8px; }
+  .feat p{ color:var(--muted); max-width:46ch; }
+  .steps-wrap{ margin-top:clamp(40px,6vw,72px); }
+  .steps{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4,1fr); gap:28px; counter-reset:s; }
+  .steps li{ position:relative; padding-top:66px; counter-increment:s; }
+  .steps li::before{
+    content:counter(s); position:absolute; top:0; left:0; width:46px; height:46px; border-radius:50%;
+    background:var(--gold); color:var(--ink); font-weight:750; font-size:1.15rem; display:grid; place-items:center;
   }
-  .feature-row:last-child{ border-bottom:1px solid var(--line); }
-  .feature-num{ font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:0.95rem; font-weight:600; }
-  .feature-row h3{ font-size:1.15rem; margin-bottom:8px; }
-  .feature-row p{ color:var(--text-muted); max-width:56ch; }
+  .steps li:not(:last-child)::after{ content:""; position:absolute; top:22px; left:58px; right:-12px; height:2px; background:var(--line-light); }
+  .steps h3{ font-size:1.2rem; margin-bottom:6px; letter-spacing:-.015em; }
+  .steps p{ font-size:.98rem; color:var(--muted); }
 
-  /* ---------------- TRUST ---------------- */
-  .trust{ padding:80px 0; background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-  .trust .wrap{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
-  .trust h2{ font-size:1.7rem; margin-bottom:18px; }
-  .trust p{ color:var(--text-muted); }
-  .trust-list{ display:flex; flex-direction:column; gap:18px; }
-  .trust-item{
-    display:flex; gap:14px; align-items:flex-start; background:var(--surface-2);
-    border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
-  }
-  .trust-item .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); margin-top:7px; flex-shrink:0; }
-  .trust-item a{ color:var(--accent); font-weight:500; }
-  .trust-item a:hover{ text-decoration:underline; }
+  /* ---------------- VERTRAUEN ---------------- */
+  .trust{ background:var(--tief); color:var(--on-blue); padding:clamp(72px,10vw,128px) 0; }
+  .trust-grid{ display:grid; grid-template-columns:5fr 6fr; gap:clamp(36px,6vw,88px); align-items:start; }
+  .trust h2{ font-size:clamp(1.9rem,3.4vw,2.9rem); }
+  .trust .text{ margin-top:20px; color:var(--on-blue-muted); max-width:46ch; }
+  .vt{ margin-top:36px; }
+  .vt-grid{ display:grid; grid-template-columns:repeat(16,1fr); gap:5px; }
+  .vt-grid span{ aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.14); }
+  .vt-grid span.hit{ background:var(--gold); }
+  .vt p{ margin-top:14px; font-size:.95rem; color:var(--on-blue-muted); }
+  .facts{ list-style:none; margin:0; padding:0; }
+  .facts li{ padding:22px 0; border-top:1px solid var(--line-dark); }
+  .facts li:last-child{ border-bottom:1px solid var(--line-dark); }
+  .facts strong{ display:block; font-size:1.15rem; font-weight:650; letter-spacing:-.01em; margin-bottom:4px; }
+  .facts span{ color:var(--on-blue-muted); }
+  .facts a{ display:block; width:fit-content; margin-top:10px; color:var(--gold); font-weight:600; text-underline-offset:4px; }
 
-  /* ---------------- PRICING ---------------- */
-  .pricing{ padding:90px 0; }
-  .price-card{
-    background:linear-gradient(160deg, var(--surface-2), var(--surface));
-    border:1px solid var(--line); border-radius:16px; padding:48px;
-    display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center;
-  }
-  .price-card h2{ font-size:1.7rem; margin-bottom:12px; }
-  .price-card p{ color:var(--text-muted); max-width:48ch; }
-  .price-box{ text-align:center; }
-  .price-amount{ font-family:'Space Grotesk',sans-serif; font-size:2.6rem; font-weight:700; color:var(--accent); }
-  .price-note{ color:var(--text-muted); font-size:0.85rem; margin-top:4px; }
-  .price-box .btn-primary{ margin-top:18px; width:100%; }
+  /* ---------------- PREIS ---------------- */
+  .pricing{ background:var(--gold); color:var(--ink); padding:clamp(64px,9vw,112px) 0; --focus:var(--ink); }
+  .price-grid{ display:grid; grid-template-columns:1.25fr .75fr; gap:clamp(32px,6vw,80px); align-items:center; }
+  .pricing h2{ font-size:clamp(2rem,3.8vw,3.2rem); }
+  .pricing .text{ margin-top:18px; max-width:50ch; font-size:1.08rem; }
+  .price-box{ text-align:left; }
+  .price{ font-size:clamp(4.2rem,9vw,7.2rem); font-weight:800; letter-spacing:-.05em; line-height:.95; }
+  .price-note{ margin-top:6px; font-weight:550; }
+  .price-box .btn{ margin-top:22px; width:100%; padding:16px 24px; font-size:1.05rem; }
+  .buy-error{ margin-top:12px; font-weight:600; font-size:.95rem; display:none; }
+  .fallback{ display:inline-block; margin-top:14px; font-size:.92rem; text-underline-offset:4px; }
 
   /* ---------------- FAQ ---------------- */
-  .faq{ padding:90px 0; border-top:1px solid var(--line); }
-  .faq h2{ font-size:1.7rem; margin-bottom:40px; }
-  .faq-item{ padding:24px 0; border-bottom:1px solid var(--line); }
-  .faq-item h3{ font-size:1.05rem; margin-bottom:8px; font-weight:600; }
-  .faq-item p{ color:var(--text-muted); max-width:64ch; }
+  .faq{ padding:clamp(72px,10vw,128px) 0; --focus:var(--blau); }
+  .faq-grid{ display:grid; grid-template-columns:4fr 7fr; gap:clamp(32px,6vw,88px); align-items:start; }
+  .faq h2{ font-size:clamp(1.9rem,3.4vw,2.9rem); }
+  details{ border-top:1.5px solid var(--line-light); }
+  details:last-child{ border-bottom:1.5px solid var(--line-light); }
+  summary{
+    list-style:none; cursor:pointer; padding:22px 44px 22px 0; position:relative;
+    font-size:1.15rem; font-weight:650; letter-spacing:-.012em; line-height:1.3;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{
+    content:"+"; position:absolute; right:4px; top:50%; transform:translateY(-52%);
+    font-size:1.7rem; font-weight:400; transition:transform .2s;
+  }
+  details[open] summary::after{ transform:translateY(-52%) rotate(45deg); }
+  details p{ padding:0 44px 24px 0; color:var(--muted); max-width:60ch; }
 
   /* ---------------- FOOTER ---------------- */
-  footer{ padding:44px 0; border-top:1px solid var(--line); }
-  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
-  footer .brand{ font-size:1rem; }
-  footer p{ color:var(--text-muted); font-size:0.85rem; }
+  footer{ background:var(--tief); color:var(--on-blue-muted); padding:40px 0; }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  footer .brand{ color:#fff; font-size:1.05rem; }
+  footer p{ font-size:.9rem; max-width:58ch; }
 
   /* ---------------- RESPONSIVE ---------------- */
-  @media (max-width:860px){
-    .hero .wrap{ grid-template-columns:1fr; }
-    .signal{ height:220px; order:-1; }
-    .trust .wrap{ grid-template-columns:1fr; }
-    .price-card{ grid-template-columns:1fr; text-align:left; }
-    .price-box{ text-align:left; }
-    .feature-row{ grid-template-columns:1fr; gap:8px; }
+  @media (max-width:920px){
+    .hero-grid, .why-grid, .trust-grid, .price-grid, .faq-grid{ grid-template-columns:1fr; }
     .nav-links{ display:none; }
+    .nav .wrap{ justify-content:space-between; }
+    .feat-grid{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr 1fr; row-gap:36px; }
+    .steps li::after{ display:none; }
+    .sticker{ transform:rotate(-.8deg); }
+    .cmp .m{ font-size:.76rem; }
+  }
+  @media (max-width:520px){
+    .wrap{ padding:0 20px; }
+    .steps{ grid-template-columns:1fr; }
+    .sticker{ padding:16px 18px 18px; }
   }
 </style>
 </head>
@@ -181,9 +229,9 @@
 
 <!-- =======================================================================
      BEARBEITBARER INHALT
-     Alle Texte, Preise und Links stehen hier zentral. Einfach die Werte
-     zwischen den Anfuehrungszeichen aendern und die Datei speichern -
-     der Rest der Datei muss dafuer nicht angefasst werden.
+     Alle Texte, Preise und Links stehen hier zentral. Werte zwischen den
+     Anführungszeichen ändern und speichern – der Rest muss nicht angefasst
+     werden.
 ======================================================================= -->
 <script>
 const CONTENT = {
@@ -196,65 +244,85 @@ const CONTENT = {
       { label: "Preis", href: "#preis" },
       { label: "FAQ", href: "#faq" }
     ],
-    ctaLabel: "Kontakt",
+    ctaLabel: "Kaufen",
     ctaHref: "#preis"
   },
 
   hero: {
-    eyebrow: "Windows-Tool",
-    headlineBefore: "Deine Netzwerk-Identitaet, ",
-    headlineAccent: "neu gemischt",
-    headlineAfter: "",
-    lead: "Ein Klick gibt deinem PC eine frische, zufaellige MAC-Adresse - ohne Wiederholungen, ohne Aufwand, jederzeit nachvollziehbar.",
-    ctaPrimaryLabel: "Preis ansehen",
+    lines: ["Neue MAC-Adresse.", "Ein Klick.", "Nie zweimal dieselbe."],
+    lead: "Ein Windows-Tool, das deinem LAN- oder WLAN-Adapter per Knopfdruck eine frische, zufällige Adresse gibt. Jede vergebene Adresse wird gemerkt und nie wieder verwendet.",
+    ctaPrimaryLabel: "Zum Preis",
     ctaPrimaryHref: "#preis",
     ctaSecondaryLabel: "Sicherheits-Check ansehen",
     ctaSecondaryHref: "#sicherheit",
-    tag1: "LAN",
-    tag2: "WLAN",
-    tag3: "1 Klick"
+    stickerLabel: "WLAN-Adapter",
+    rollLabel: "Neu würfeln",
+    stickerNote: "Die markierte Ziffer ist immer 2, 6, A oder E. So kennzeichnet sich eine selbst vergebene Adresse.",
+    ledgerTitle: "Bereits vergeben",
+    ledgerEmpty: "Sobald du würfelst, landen ältere Adressen hier und kommen nie wieder vor.",
+    demoNote: "Vorschau im Browser. Das Tool schreibt die Adresse direkt auf deinen Adapter."
   },
 
   context: {
-    quote: "Jedes Geraet sendet dieselbe Hardware-Kennung, jedes Mal wenn es sich verbindet.",
-    detail: "Die MAC-Adresse deines Netzwerkadapters bleibt normalerweise dauerhaft gleich - das macht dein Geraet in Netzwerken langfristig wiedererkennbar. Dieses Tool setzt sie per Knopfdruck neu, ohne dass du dich mit Geraete-Manager oder Registry auseinandersetzen musst."
+    heading: "Dein Adapter stellt sich überall gleich vor.",
+    text: "Jede Netzwerkkarte trägt eine feste Kennung, die MAC-Adresse. Sie wird bei jedem WLAN und an jedem Router mitgesendet, und wer möchte, erkennt dein Gerät daran wieder. Das Tool setzt für deinen aktiven Adapter eine neue Adresse, ohne dass du dich durch Geräte-Manager oder Registry klicken musst.",
+    tableHead: ["Verbindung", "Ohne Tool", "Mit Tool"],
+    sameMac: "F0:9E:4A:31:C8:75",
+    rows: [
+      { net: "Café-WLAN",  fresh: "6E:1B:D4:92:07:AC" },
+      { net: "Hotel",      fresh: "AA:33:5F:C1:E8:14" },
+      { net: "Uni-Netz",   fresh: "3E:90:B7:4D:6A:F3" }
+    ],
+    note: "Beispieladressen. Das Tool ändert nur diese lokale Kennung, nicht deine Internetnutzung insgesamt."
   },
 
-  features: [
-    {
-      title: "Ein Klick, fertig",
-      text: "Oeffnen, Button druecken, kurz warten. Kein technisches Vorwissen noetig."
-    },
-    {
-      title: "Nie dieselbe Adresse zweimal",
-      text: "Jede vergebene MAC-Adresse wird gespeichert, damit garantiert keine Wiederholung stattfindet."
-    },
-    {
-      title: "Aktualisiert sich selbststaendig",
-      text: "Neue Versionen werden automatisch geladen - auch im Hintergrund, ohne dass du etwas oeffnen musst."
-    },
-    {
-      title: "An dein Geraet gebunden",
-      text: "Jede Lizenz funktioniert auf genau einem PC - transparent und nachvollziehbar fuer beide Seiten."
-    }
-  ],
+  features: {
+    heading: "Was das Tool für dich übernimmt",
+    items: [
+      { title: "Ein Klick, fertig", text: "Öffnen, Button drücken, kurz warten. Es braucht kein technisches Vorwissen." },
+      { title: "Nie dieselbe Adresse zweimal", text: "Jede vergebene Adresse wird gespeichert. Eine Wiederholung ist damit ausgeschlossen." },
+      { title: "Aktualisiert sich selbst", text: "Neue Versionen lädt das Tool beim Start und einmal täglich für ein paar Sekunden im Hintergrund. Es läuft kein Dauerprozess." },
+      { title: "An dein Gerät gebunden", text: "Jeder Lizenzschlüssel funktioniert auf genau einem PC. Das gilt für beide Seiten und ist nachvollziehbar." }
+    ]
+  },
+
+  steps: {
+    heading: "So läuft es ab",
+    items: [
+      { title: "Bezahlen", text: "Per Bitcoin, Litecoin oder Solana. Schlüssel und Download erscheinen direkt nach der Bestätigung." },
+      { title: "Installieren", text: "ZIP entpacken und „Installieren.vbs“ doppelklicken. Danach liegt eine Verknüpfung auf dem Desktop." },
+      { title: "Aktivieren", text: "Beim ersten Start den Lizenzschlüssel eingeben. Dafür braucht es einmal Internet." },
+      { title: "Wechseln", text: "Button klicken. Die Verbindung ist 4 bis 5 Sekunden weg, dann gilt die neue Adresse." }
+    ]
+  },
 
   trust: {
-    heading: "Kein Grund fuer Misstrauen",
-    text: "Bei einem Tool, das Adminrechte braucht und sich selbst aktualisiert, ist Skepsis normal und berechtigt. Deshalb legen wir offen, was drinsteckt:",
+    heading: "Prüf es selbst.",
+    text: "Ein Tool, das Adminrechte braucht und sich selbst aktualisiert, verdient Skepsis. Deshalb liegt alles offen, auch das, was nicht perfekt aussieht.",
+    scanCaption: "7 von 64 Virenscannern melden einen generischen Verdacht. 57 melden nichts.",
+    scanHits: [5, 14, 22, 29, 41, 50, 58],
     items: [
       {
-        text: "Unabhaengig geprueft: 7 von 64 Antivirenprogrammen melden einen generischen Verdacht (Heuristik, keine bestaetigte Bedrohung) - vor allem weil das Tool Adminrechte braucht und sich selbst aktualisiert. Ergebnis komplett und unveraendert einsehbar: ",
+        title: "Öffentlicher Scan, unverändert",
+        text: "Die 7 Treffer sind Heuristik-Meldungen wie „Trojan.Script.Generic“, keine bestätigte Bedrohung. Sie sind bei Skripten typisch, die Adminrechte anfordern und sich selbst aktualisieren.",
         linkLabel: "Scan-Ergebnis ansehen",
         linkHref: "https://www.virustotal.com/gui/file/9876a2ef17a884489cad35d22231d48f99231377e71f79e1e95159a544a4e99a?nocache=1"
       },
       {
-        text: "Der komplette Quellcode ist oeffentlich einsehbar: ",
-        linkLabel: "auf GitHub ansehen",
+        title: "Quellcode auf GitHub",
+        text: "Der komplette Code ist öffentlich einsehbar.",
+        linkLabel: "Auf GitHub ansehen",
         linkHref: "https://github.com/Nauru-Wlan/net-tool-dist"
       },
       {
-        text: "Reines Textskript - kann vor dem Ausfuehren jederzeit in Notepad geoeffnet und komplett gelesen werden.",
+        title: "Ein Textskript, kein verstecktes Programm",
+        text: "Öffne es vor dem Start in Notepad und lies, was es tut.",
+        linkLabel: "",
+        linkHref: ""
+      },
+      {
+        title: "Warum Adminrechte?",
+        text: "Windows erlaubt Änderungen an Netzwerkadaptern nur mit ihnen. Das ist eine Vorgabe des Systems.",
         linkLabel: "",
         linkHref: ""
       }
@@ -263,228 +331,397 @@ const CONTENT = {
 
   pricing: {
     heading: "Zugang erhalten",
-    text: "Bezahle direkt per Krypto (BTC, LTC oder SOL). Nach Bestaetigung der Zahlung erhaeltst du deinen Lizenzschluessel und den Download automatisch auf der naechsten Seite.",
-    amount: "10€",
-    note: "einmalig, ein Geraet",
+    text: "Bezahle direkt per Krypto (BTC, LTC oder SOL). Nach der Bestätigung erscheinen Lizenzschlüssel und Download automatisch auf der nächsten Seite.",
+    amount: "10 €",
+    note: "einmalig, ein Gerät",
     ctaLabel: "Jetzt kaufen",
+    ctaBusy: "Wird vorbereitet ...",
+    errorText: "Die Bestellung konnte nicht gestartet werden. Versuche es erneut oder melde dich über Discord.",
     apiUrl: "https://script.google.com/macros/s/AKfycbw0XvYlXlFoW7YwqrEaZhrmXVtBWdwK77b5K-sgLuY4RyweIoI2lU0V3Mohh9_868bM/exec",
     discordFallbackHref: "https://discord.com/users/1548726102128599062",
-    discordFallbackLabel: "Lieber erst Fragen? Auf Discord melden"
+    discordFallbackLabel: "Erst Fragen? Auf Discord melden"
   },
 
-  faq: [
-    {
-      q: "Ich habe noch keine Kryptowaehrung - wie bezahle ich?",
-      a: "Du kannst Krypto bei einer regulierten Boerse oder in einer Wallet-App kaufen. Die meisten Anbieter verlangen dafuer eine eigene Identitaetspruefung - das liegt bei der jeweiligen Plattform. Fuer 10 Euro ist Litecoin (LTC) oft ein guter Einstieg, weil die Netzwerkgebuehren sehr niedrig sind. Wichtig: Sende den Betrag so, dass die volle Summe ankommt. Zieht deine Boerse beim Abheben eine Gebuehr ab, kommt sonst zu wenig an und die Zahlung gilt als unvollstaendig - dann sende einfach den Rest an dieselbe Adresse nach."
-    },
-    {
-      q: "Brauche ich technisches Wissen?",
-      a: "Nein. Installation und Nutzung bestehen jeweils aus einem Doppelklick."
-    },
-    {
-      q: "Funktioniert das auf jedem PC?",
-      a: "Das Tool ist fuer Windows 10 und 11 gebaut und funktioniert mit den meisten LAN- und WLAN-Adaptern."
-    },
-    {
-      q: "Was genau macht eine neue MAC-Adresse fuer mich?",
-      a: "Sie aendert die Hardware-Kennung, mit der sich dein Netzwerkadapter bei Routern und Netzwerken meldet. Das ist keine allgemeine Anonymisierung deiner Internetnutzung, sondern betrifft ausschliesslich diese lokale Geraete-Kennung."
-    },
-    {
-      q: "Kann ich den Schluessel weitergeben?",
-      a: "Jeder Lizenzschluessel ist fest an ein einzelnes Geraet gebunden und funktioniert nicht auf einem zweiten PC."
-    }
-  ],
+  faq: {
+    heading: "Häufige Fragen",
+    items: [
+      {
+        q: "Brauche ich technisches Wissen?",
+        a: "Nein. Installation und Nutzung bestehen jeweils aus einem Doppelklick."
+      },
+      {
+        q: "Funktioniert das auf jedem PC?",
+        a: "Das Tool ist für Windows 10 und 11 gebaut und funktioniert mit den meisten LAN- und WLAN-Adaptern."
+      },
+      {
+        q: "Was bringt mir eine neue MAC-Adresse?",
+        a: "Sie ändert die Hardware-Kennung, mit der sich dein Netzwerkadapter bei Routern und Netzwerken meldet. Das ist keine allgemeine Anonymisierung deiner Internetnutzung und ersetzt kein VPN. Es betrifft ausschließlich diese lokale Geräte-Kennung."
+      },
+      {
+        q: "Kann ich die ursprüngliche Adresse wiederherstellen?",
+        a: "Ja, über den Geräte-Manager von Windows. Die Schritte stehen in der Anleitung im Paket."
+      },
+      {
+        q: "Ich habe noch keine Kryptowährung. Was jetzt?",
+        a: "Bezahlt wird ausschließlich in Krypto, andere Zahlungsarten wie Karte oder PayPal gibt es nicht. Du kannst Bitcoin, Litecoin oder Solana bei einer gängigen Krypto-Börse kaufen und von dort an die Adresse senden, die dir beim Kauf angezeigt wird. Achte darauf, den vollen Betrag anzuweisen: Netzwerkgebühren werden oft abgezogen, und eine zu kleine Zahlung gilt als unvollständig."
+      },
+      {
+        q: "Kann ich den Schlüssel weitergeben?",
+        a: "Jeder Lizenzschlüssel ist fest an ein einzelnes Gerät gebunden und funktioniert nicht auf einem zweiten PC."
+      }
+    ]
+  },
 
   footer: {
-    note: "Dieses Tool aendert eine lokale Geraete-Kennung und ersetzt keine VPN- oder Anonymisierungssoftware."
+    note: "Dieses Tool ändert eine lokale Geräte-Kennung und ersetzt keine VPN- oder Anonymisierungssoftware."
   }
 };
 </script>
 
-<nav>
-  <div class="wrap" id="nav-wrap">
-    <div class="brand" id="nav-brand"></div>
-    <div class="nav-links" id="nav-links"></div>
-    <a class="nav-cta" id="nav-cta"></a>
-  </div>
-</nav>
-
-<section class="hero">
+<header class="nav">
   <div class="wrap">
+    <a class="brand" href="#top" id="nav-brand"></a>
+    <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation"></nav>
+    <a class="btn btn-gold nav-cta" id="nav-cta"></a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow" id="hero-eyebrow"></span>
       <h1 id="hero-headline"></h1>
       <p class="lead" id="hero-lead"></p>
       <div class="cta-row">
-        <a class="btn-primary" id="hero-cta-primary"></a>
-        <a class="btn-ghost" id="hero-cta-secondary"></a>
+        <a class="btn btn-gold" id="hero-cta-primary"></a>
+        <a class="btn btn-line" id="hero-cta-secondary"></a>
       </div>
     </div>
-    <div class="signal">
-      <div class="ring r1"></div>
-      <div class="ring r2"></div>
-      <div class="ring r3"></div>
-      <div class="ring r4"></div>
-      <div class="core"></div>
-      <div class="tag t1" id="hero-tag1"></div>
-      <div class="tag t2" id="hero-tag2"></div>
-      <div class="tag t3" id="hero-tag3"></div>
+
+    <div class="demo">
+      <div class="sticker">
+        <div class="sticker-head">
+          <span id="sticker-label"></span>
+          <span id="sticker-count"></span>
+        </div>
+        <div class="mac" id="mac" aria-hidden="true"></div>
+        <svg class="barcode" id="barcode" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="sticker-foot">
+          <button class="btn btn-ink" id="roll" type="button"></button>
+          <p id="sticker-note"></p>
+        </div>
+        <span class="sr-only" id="mac-live" aria-live="polite"></span>
+      </div>
+      <div class="ledger">
+        <p class="ledger-title" id="ledger-title"></p>
+        <ol id="ledger"></ol>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="context">
-  <div class="wrap">
-    <p id="context-quote"></p>
-    <p class="small" id="context-detail"></p>
+<section class="why">
+  <div class="wrap why-grid">
+    <div>
+      <h2 id="why-heading"></h2>
+      <p class="text" id="why-text"></p>
+    </div>
+    <div>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr id="cmp-head"></tr></thead>
+          <tbody id="cmp-body"></tbody>
+        </table>
+      </div>
+      <p class="cmp-note" id="cmp-note"></p>
+    </div>
   </div>
 </section>
 
 <section class="features" id="funktionen">
   <div class="wrap">
-    <h2>Was das Tool fuer dich uebernimmt</h2>
-    <div id="feature-list"></div>
+    <h2 id="features-heading"></h2>
+    <div class="feat-grid" id="feat-grid"></div>
+
+    <div class="steps-wrap">
+      <h2 id="steps-heading"></h2>
+      <ol class="steps" id="steps"></ol>
+    </div>
   </div>
 </section>
 
 <section class="trust" id="sicherheit">
-  <div class="wrap">
+  <div class="wrap trust-grid">
     <div>
       <h2 id="trust-heading"></h2>
-      <p id="trust-text"></p>
+      <p class="text" id="trust-text"></p>
+      <div class="vt">
+        <div class="vt-grid" id="vt-grid" role="img" aria-label="64 Virenscanner, davon 7 mit generischem Verdacht"></div>
+        <p id="vt-caption"></p>
+      </div>
     </div>
-    <div class="trust-list" id="trust-list"></div>
+    <ul class="facts" id="facts"></ul>
   </div>
 </section>
 
 <section class="pricing" id="preis">
-  <div class="wrap">
-    <div class="price-card">
-      <div>
-        <h2 id="pricing-heading"></h2>
-        <p id="pricing-text"></p>
-      </div>
-      <div class="price-box">
-        <div class="price-amount" id="pricing-amount"></div>
-        <div class="price-note" id="pricing-note"></div>
-        <a class="btn-primary" id="pricing-cta"></a>
-        <div style="margin-top:14px;">
-          <a id="pricing-discord-fallback" style="font-size:0.85rem; color:var(--text-muted);" target="_blank" rel="noopener"></a>
-        </div>
-      </div>
+  <div class="wrap price-grid">
+    <div>
+      <h2 id="pricing-heading"></h2>
+      <p class="text" id="pricing-text"></p>
+    </div>
+    <div class="price-box">
+      <div class="price" id="pricing-amount"></div>
+      <div class="price-note" id="pricing-note"></div>
+      <button class="btn btn-ink" id="pricing-cta" type="button"></button>
+      <p class="buy-error" id="buy-error" role="alert"></p>
+      <a class="fallback" id="pricing-discord-fallback" target="_blank" rel="noopener"></a>
     </div>
   </div>
 </section>
 
 <section class="faq" id="faq">
-  <div class="wrap">
-    <h2>Haeufige Fragen</h2>
+  <div class="wrap faq-grid">
+    <h2 id="faq-heading"></h2>
     <div id="faq-list"></div>
   </div>
 </section>
 
+</main>
+
 <footer>
   <div class="wrap">
-    <div class="brand" id="footer-brand"></div>
+    <span class="brand" id="footer-brand"></span>
     <p id="footer-note"></p>
   </div>
 </footer>
 
 <script>
-  document.getElementById('nav-brand').innerHTML = CONTENT.brandName;
-  document.getElementById('footer-brand').textContent = CONTENT.brandName;
-  document.getElementById('footer-note').textContent = CONTENT.footer.note;
+  /* ---------- Markenzeichen: 12-zackiger Stern (12 Hex-Ziffern einer MAC) ---------- */
+  function starSVG(size, fill){
+    const pts = [];
+    for (let i = 0; i < 24; i++){
+      const r = i % 2 === 0 ? 11.6 : 6.4;
+      const a = Math.PI * i / 12 - Math.PI / 2;
+      pts.push((12 + r * Math.cos(a)).toFixed(2) + ',' + (12 + r * Math.sin(a)).toFixed(2));
+    }
+    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" aria-hidden="true"><polygon points="' + pts.join(' ') + '" fill="' + fill + '"/></svg>';
+  }
+  (function(){
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1A2FA0"/><g transform="translate(3.6 3.6) scale(.7)">' +
+      starSVG(24, '#F4C22B').replace(/^<svg[^>]*>/, '').replace('</svg>', '') + '</g></svg>';
+    document.getElementById('favicon').href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+  })();
 
-  const navLinks = document.getElementById('nav-links');
-  CONTENT.nav.links.forEach(l => {
+  /* ---------- Statischer Inhalt aus CONTENT ---------- */
+  const $ = id => document.getElementById(id);
+  const C = CONTENT;
+
+  $('nav-brand').innerHTML = starSVG(26, '#F4C22B') + '<span>' + C.brandName + '</span>';
+  $('footer-brand').innerHTML = starSVG(22, '#F4C22B') + '<span>' + C.brandName + '</span>';
+  $('footer-note').textContent = C.footer.note;
+
+  C.nav.links.forEach(l => {
     const a = document.createElement('a');
     a.href = l.href; a.textContent = l.label;
-    navLinks.appendChild(a);
+    $('nav-links').appendChild(a);
   });
-  const navCta = document.getElementById('nav-cta');
-  navCta.href = CONTENT.nav.ctaHref;
-  navCta.textContent = CONTENT.nav.ctaLabel;
+  $('nav-cta').href = C.nav.ctaHref; $('nav-cta').textContent = C.nav.ctaLabel;
 
-  document.getElementById('hero-eyebrow').textContent = CONTENT.hero.eyebrow;
-  document.getElementById('hero-headline').innerHTML =
-    CONTENT.hero.headlineBefore + '<em>' + CONTENT.hero.headlineAccent + '</em>' + CONTENT.hero.headlineAfter;
-  document.getElementById('hero-lead').textContent = CONTENT.hero.lead;
-  const heroPrimary = document.getElementById('hero-cta-primary');
-  heroPrimary.href = CONTENT.hero.ctaPrimaryHref; heroPrimary.textContent = CONTENT.hero.ctaPrimaryLabel;
-  const heroSecondary = document.getElementById('hero-cta-secondary');
-  heroSecondary.href = CONTENT.hero.ctaSecondaryHref; heroSecondary.textContent = CONTENT.hero.ctaSecondaryLabel;
-  document.getElementById('hero-tag1').textContent = CONTENT.hero.tag1;
-  document.getElementById('hero-tag2').textContent = CONTENT.hero.tag2;
-  document.getElementById('hero-tag3').textContent = CONTENT.hero.tag3;
-
-  document.getElementById('context-quote').textContent = CONTENT.context.quote;
-  document.getElementById('context-detail').textContent = CONTENT.context.detail;
-
-  const featureList = document.getElementById('feature-list');
-  CONTENT.features.forEach((f, i) => {
-    const row = document.createElement('div');
-    row.className = 'feature-row';
-    row.innerHTML = `
-      <div class="feature-num">0${i+1}</div>
-      <div>
-        <h3>${f.title}</h3>
-        <p>${f.text}</p>
-      </div>`;
-    featureList.appendChild(row);
+  C.hero.lines.forEach(t => {
+    const s = document.createElement('span'); s.textContent = t; $('hero-headline').appendChild(s);
   });
+  $('hero-lead').textContent = C.hero.lead;
+  $('hero-cta-primary').href = C.hero.ctaPrimaryHref;     $('hero-cta-primary').textContent = C.hero.ctaPrimaryLabel;
+  $('hero-cta-secondary').href = C.hero.ctaSecondaryHref; $('hero-cta-secondary').textContent = C.hero.ctaSecondaryLabel;
+  $('sticker-label').textContent = C.hero.stickerLabel;
+  $('roll').textContent = C.hero.rollLabel;
+  $('sticker-note').textContent = C.hero.stickerNote;
+  $('ledger-title').textContent = C.hero.ledgerTitle;
 
-  document.getElementById('trust-heading').textContent = CONTENT.trust.heading;
-  document.getElementById('trust-text').textContent = CONTENT.trust.text;
-  const trustList = document.getElementById('trust-list');
-  CONTENT.trust.items.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'trust-item';
-    const linkHtml = item.linkLabel
-      ? `<a href="${item.linkHref}" target="_blank" rel="noopener">${item.linkLabel}</a>`
-      : '';
-    el.innerHTML = `<div class="dot"></div><p>${item.text}${linkHtml}</p>`;
-    trustList.appendChild(el);
+  $('why-heading').textContent = C.context.heading;
+  $('why-text').textContent = C.context.text;
+  C.context.tableHead.forEach((h, i) => {
+    const th = document.createElement('th'); th.scope = 'col'; th.textContent = h; $('cmp-head').appendChild(th);
+  });
+  C.context.rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<th scope="row"></th><td class="m"><span class="same"></span></td><td class="m"></td>';
+    tr.children[0].textContent = r.net;
+    tr.children[1].firstChild.textContent = C.context.sameMac;
+    tr.children[2].textContent = r.fresh;
+    $('cmp-body').appendChild(tr);
+  });
+  $('cmp-note').textContent = C.context.note;
+
+  $('features-heading').textContent = C.features.heading;
+  C.features.items.forEach(f => {
+    const d = document.createElement('div'); d.className = 'feat';
+    d.innerHTML = '<h3></h3><p></p>';
+    d.children[0].textContent = f.title; d.children[1].textContent = f.text;
+    $('feat-grid').appendChild(d);
+  });
+  $('steps-heading').textContent = C.steps.heading;
+  C.steps.items.forEach(s => {
+    const li = document.createElement('li');
+    li.innerHTML = '<h3></h3><p></p>';
+    li.children[0].textContent = s.title; li.children[1].textContent = s.text;
+    $('steps').appendChild(li);
   });
 
-  document.getElementById('pricing-heading').textContent = CONTENT.pricing.heading;
-  document.getElementById('pricing-text').textContent = CONTENT.pricing.text;
-  document.getElementById('pricing-amount').textContent = CONTENT.pricing.amount;
-  document.getElementById('pricing-note').textContent = CONTENT.pricing.note;
-
-  const pricingCta = document.getElementById('pricing-cta');
-  pricingCta.textContent = CONTENT.pricing.ctaLabel;
-  pricingCta.href = "#";
-  pricingCta.addEventListener('click', async (evt) => {
-    evt.preventDefault();
-    const originalLabel = pricingCta.textContent;
-    pricingCta.textContent = "Wird vorbereitet ...";
-    pricingCta.style.pointerEvents = "none";
-    try {
-      const res = await fetch(`${CONTENT.pricing.apiUrl}?action=create_order`);
-      const data = await res.json();
-      if (data.invoiceUrl) {
-        window.location.href = data.invoiceUrl;
-      } else {
-        throw new Error("no invoice url");
-      }
-    } catch (err) {
-      pricingCta.textContent = originalLabel;
-      pricingCta.style.pointerEvents = "auto";
-      alert("Die Bestellung konnte nicht gestartet werden. Bitte versuche es erneut oder melde dich ueber Discord.");
+  $('trust-heading').textContent = C.trust.heading;
+  $('trust-text').textContent = C.trust.text;
+  $('vt-caption').textContent = C.trust.scanCaption;
+  for (let i = 0; i < 64; i++){
+    const c = document.createElement('span');
+    if (C.trust.scanHits.includes(i)) c.className = 'hit';
+    $('vt-grid').appendChild(c);
+  }
+  C.trust.items.forEach(it => {
+    const li = document.createElement('li');
+    li.innerHTML = '<strong></strong><span></span>';
+    li.children[0].textContent = it.title; li.children[1].textContent = it.text;
+    if (it.linkLabel){
+      const a = document.createElement('a');
+      a.href = it.linkHref; a.target = '_blank'; a.rel = 'noopener'; a.textContent = it.linkLabel;
+      li.appendChild(a);
     }
+    $('facts').appendChild(li);
   });
 
-  const discordFallback = document.getElementById('pricing-discord-fallback');
-  discordFallback.href = CONTENT.pricing.discordFallbackHref;
-  discordFallback.textContent = CONTENT.pricing.discordFallbackLabel;
+  $('pricing-heading').textContent = C.pricing.heading;
+  $('pricing-text').textContent = C.pricing.text;
+  $('pricing-amount').textContent = C.pricing.amount;
+  $('pricing-note').textContent = C.pricing.note;
+  $('pricing-cta').textContent = C.pricing.ctaLabel;
+  $('pricing-discord-fallback').href = C.pricing.discordFallbackHref;
+  $('pricing-discord-fallback').textContent = C.pricing.discordFallbackLabel;
 
-  const faqList = document.getElementById('faq-list');
-  CONTENT.faq.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'faq-item';
-    el.innerHTML = `<h3>${item.q}</h3><p>${item.a}</p>`;
-    faqList.appendChild(el);
+  $('faq-heading').textContent = C.faq.heading;
+  C.faq.items.forEach(item => {
+    const d = document.createElement('details');
+    d.innerHTML = '<summary></summary><p></p>';
+    d.children[0].textContent = item.q; d.children[1].textContent = item.a;
+    $('faq-list').appendChild(d);
   });
+
+  /* ---------- Kaufen: legt die Bestellung an und leitet zur Zahlung weiter ---------- */
+  (function(){
+    const btn = $('pricing-cta'), err = $('buy-error');
+    btn.addEventListener('click', async () => {
+      const label = C.pricing.ctaLabel;
+      err.style.display = 'none';
+      btn.disabled = true; btn.textContent = C.pricing.ctaBusy;
+      try {
+        const res = await fetch(C.pricing.apiUrl + '?action=create_order');
+        const data = await res.json();
+        if (data.invoiceUrl){ window.location.href = data.invoiceUrl; }
+        else { throw new Error('no invoice url'); }
+      } catch (e) {
+        btn.disabled = false; btn.textContent = label;
+        err.textContent = C.pricing.errorText; err.style.display = 'block';
+      }
+    });
+  })();
+
+  /* =====================================================================
+     LIVE-DEMO: würfelt eine lokal administrierte Unicast-Adresse
+     (gleiche Regel wie im Tool: Bit 1 gesetzt, Bit 0 gelöscht)
+  ===================================================================== */
+  (function(){
+    const HEX = '0123456789ABCDEF';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const macEl = $('mac'), barcode = $('barcode'), btn = $('roll');
+    const used = new Set();
+    let current = '', count = 1, rolling = false, touched = false;
+
+    function newMac(){
+      let key;
+      do {
+        const b = new Uint8Array(6); crypto.getRandomValues(b);
+        b[0] = (b[0] & 0xFE) | 0x02;
+        key = Array.from(b).map(x => x.toString(16).toUpperCase().padStart(2, '0')).join('');
+      } while (used.has(key));
+      used.add(key);
+      return key;
+    }
+    function fmt(chars){
+      const p = [];
+      for (let i = 0; i < 12; i += 2) p.push(chars[i] + chars[i + 1]);
+      return p;
+    }
+    function render(chars){
+      const p = fmt(chars);
+      macEl.innerHTML = p.map((x, i) => i === 0 ? x[0] + '<span class="nib">' + x[1] + '</span>' : x).join('<i>:</i>');
+    }
+    function drawBarcode(hex){
+      let x = 0, r = '';
+      const bar = w => { r += '<rect x="' + x + '" y="0" width="' + w + '" height="44"/>'; x += w; };
+      bar(2); x += 1; bar(1); x += 2;
+      for (const ch of hex){
+        const v = parseInt(ch, 16);
+        for (let b = 3; b >= 0; b--){
+          const bit = (v >> b) & 1;
+          bar(bit ? 3 : 1); x += bit ? 1 : 2;
+        }
+      }
+      bar(1); x += 1; bar(2);
+      barcode.setAttribute('viewBox', '0 0 ' + x + ' 44');
+      barcode.innerHTML = r;
+    }
+    function ledgerAdd(hex){
+      const ol = $('ledger');
+      const empty = ol.querySelector('.empty'); if (empty) empty.remove();
+      const li = document.createElement('li');
+      li.textContent = fmt(hex.split('')).join(':');
+      ol.insertBefore(li, ol.firstChild);
+      while (ol.children.length > 4) ol.removeChild(ol.lastChild);
+    }
+    function label(){ $('sticker-count').textContent = 'Adresse ' + count; }
+    function finish(){
+      drawBarcode(current); label();
+      $('mac-live').textContent = 'Neue MAC-Adresse: ' + fmt(current.split('')).join(':');
+      rolling = false; btn.disabled = false;
+    }
+    function animateTo(target){
+      if (reduce){ render(target); finish(); return; }
+      const start = performance.now(), settle = i => 380 + i * 70, total = settle(11) + 80;
+      let last = -100;
+      function frame(t){
+        const el = t - start;
+        if (el - last > 45){
+          last = el;
+          render(target.map((c, i) => el >= settle(i) ? c : HEX[Math.random() * 16 | 0]));
+        }
+        if (el < total) requestAnimationFrame(frame);
+        else { render(target); finish(); }
+      }
+      requestAnimationFrame(frame);
+    }
+    function roll(){
+      if (rolling) return;
+      rolling = true; btn.disabled = true;
+      const old = current;
+      current = newMac();
+      count++;
+      ledgerAdd(old);
+      animateTo(current.split(''));
+    }
+
+    // Startzustand
+    const ol = $('ledger');
+    const e = document.createElement('li'); e.className = 'empty'; e.textContent = C.hero.ledgerEmpty; ol.appendChild(e);
+    current = newMac();
+    render(current.split('')); drawBarcode(current); label();
+
+    btn.addEventListener('click', () => { touched = true; roll(); });
+
+    // Ein einziger Moment beim Laden: die Adresse würfelt einmal von selbst.
+    if (!reduce){
+      setTimeout(() => { if (!touched) roll(); }, 1300);
+    }
+  })();
 </script>
 
 </body>

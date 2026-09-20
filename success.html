@@ -2,178 +2,279 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bestellung - Nauru-Wlan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A2FA0">
+<meta name="robots" content="noindex">
+<title>Bestellung – Nauru-Wlan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b1220; --surface:#121b2c; --surface-2:#17223a; --line:rgba(255,255,255,0.09);
-    --text:#eaf0fa; --text-muted:#8ba0c2; --accent:#38e6c8; --accent-soft:rgba(56,230,200,0.12);
+    --blau:#1A2FA0; --tief:#0B1657; --ink:#0C1240; --gold:#F4C22B; --etikett:#FBFAF6; --muted:#4A5178;
+    --on-blue-muted:rgba(255,255,255,.78); --line-dark:rgba(255,255,255,.22);
+    --sans:'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono:'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
   }
   *{ box-sizing:border-box; }
   body{
-    margin:0; background:var(--bg); color:var(--text); min-height:100vh;
-    font-family:'Inter', system-ui, sans-serif; display:flex; align-items:center; justify-content:center; padding:24px;
+    margin:0; min-height:100vh; background:var(--blau); color:#fff;
+    font-family:var(--sans); font-optical-sizing:auto; font-size:1.0625rem; line-height:1.6;
+    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
   }
-  h1,h2{ font-family:'Space Grotesk', system-ui, sans-serif; margin:0; }
-  .card{
-    max-width:480px; width:100%; background:var(--surface); border:1px solid var(--line);
-    border-radius:16px; padding:44px; text-align:center;
-  }
-  .spinner{
-    width:40px; height:40px; border-radius:50%; border:3px solid var(--line);
-    border-top-color:var(--accent); margin:0 auto 24px; animation:spin 0.9s linear infinite;
-  }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce){ .spinner{ animation:none; } }
-  h2{ font-size:1.4rem; margin-bottom:12px; }
-  p{ color:var(--text-muted); line-height:1.6; margin:0 0 8px; }
-  .license-box{
-    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
-    padding:16px; margin:22px 0; font-family:'Space Grotesk',monospace; font-size:1rem;
-    letter-spacing:0.03em; word-break:break-all; color:var(--accent); display:none;
-  }
+  h1{ margin:0; font-size:clamp(2rem,5vw,3rem); font-weight:800; letter-spacing:-.035em; line-height:1.04; text-wrap:balance; }
+  p{ margin:0; }
+  a{ color:inherit; }
+  :focus-visible{ outline:3px solid var(--gold); outline-offset:3px; border-radius:4px; }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .hidden{ display:none !important; }
+
+  header{ padding:22px 28px; }
+  .brand{ display:inline-flex; align-items:center; gap:10px; font-weight:750; font-size:1.2rem; letter-spacing:-.02em; text-decoration:none; }
+  .brand svg{ display:block; }
+
+  main{ flex:1; width:100%; max-width:640px; margin:0 auto; padding:clamp(24px,6vw,64px) 24px 72px; }
+  .lead{ margin-top:16px; color:var(--on-blue-muted); max-width:52ch; }
+  .lead + .lead{ margin-top:10px; }
+
   .btn{
-    display:inline-block; background:var(--accent); color:#06231d; padding:14px 28px;
-    border-radius:9px; font-weight:600; margin-top:8px; text-decoration:none;
+    display:inline-flex; align-items:center; justify-content:center; font:inherit; font-weight:650;
+    padding:14px 26px; border-radius:10px; border:2px solid transparent; cursor:pointer; text-decoration:none;
+    transition:background .15s, border-color .15s;
   }
-  .info{ text-align:left; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:20px; margin-top:26px; display:none; }
-  .info h3{ font-size:0.95rem; margin-bottom:10px; color:var(--text); }
-  .info ol{ margin:0; padding-left:20px; color:var(--text-muted); font-size:0.92rem; line-height:1.7; }
-  .info .support{ margin-top:14px; font-size:0.88rem; color:var(--text-muted); }
-  .error{ color:#ff8a8a; display:none; }
-  .order-ref{ font-size:0.85rem; margin-top:18px; word-break:break-all; }
-  .order-ref span{ font-family:'Space Grotesk',monospace; color:var(--text); }
-  .hidden{ display:none; }
+  .btn-gold{ background:var(--gold); color:var(--ink); }
+  .btn-gold:hover{ background:#FFD24D; }
+  .btn-ink{ background:var(--ink); color:#fff; }
+  .btn-ink:hover{ background:#1B2470; }
+  .btn-line{ border-color:var(--line-dark); color:#fff; }
+  .btn-line:hover{ border-color:#fff; }
+  .actions{ margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
+
+  /* Warte-Zustand: der Stern dreht sich langsam, solange geprüft wird */
+  .loader{ margin-bottom:28px; width:56px; height:56px; animation:spin 9s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .loader{ animation:none; } }
+
+  .order{ margin-top:30px; padding-top:18px; border-top:1px solid var(--line-dark); font-size:.9rem; color:var(--on-blue-muted); }
+  .order code{ display:block; margin-top:4px; font-family:var(--mono); font-size:.8rem; color:#fff; word-break:break-all; }
+
+  /* Lizenz-Aufkleber */
+  .sticker{
+    container-type:inline-size; margin-top:32px; transform:rotate(-1.2deg);
+    background:var(--etikett); color:var(--ink); border-radius:14px; padding:20px 26px 22px;
+    box-shadow:0 30px 50px -22px rgba(2,6,36,.6);
+  }
+  .sticker-head{ padding-bottom:12px; border-bottom:1.5px dashed rgba(12,18,64,.28); font-size:.86rem; font-weight:600; color:var(--muted); }
+  .key{ font-family:var(--mono); font-weight:600; font-size:clamp(.95rem,4.6cqw,1.35rem); letter-spacing:-.02em; margin:22px 0 18px; word-break:break-all; line-height:1.35; }
+  .barcode{ display:block; width:100%; height:40px; fill:var(--ink); }
+  .sticker-foot{ margin-top:20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .sticker-foot p{ font-size:.86rem; color:var(--muted); flex:1; min-width:180px; line-height:1.45; }
+
+  .next{ margin-top:44px; }
+  .next h2{ margin:0 0 6px; font-size:1.3rem; font-weight:750; letter-spacing:-.02em; }
+  .next ol{ margin:14px 0 0; padding:0; list-style:none; counter-reset:n; }
+  .next li{ counter-increment:n; position:relative; padding:12px 0 12px 46px; border-top:1px solid var(--line-dark); color:var(--on-blue-muted); }
+  .next li:last-child{ border-bottom:1px solid var(--line-dark); }
+  .next li::before{
+    content:counter(n); position:absolute; left:0; top:11px; width:30px; height:30px; border-radius:50%;
+    background:var(--gold); color:var(--ink); font-weight:750; font-size:.95rem; display:grid; place-items:center;
+  }
+  .next .hint{ margin-top:20px; font-size:.95rem; color:var(--on-blue-muted); }
+  .next a{ color:var(--gold); text-underline-offset:4px; }
+
+  @media (max-width:520px){ .sticker{ padding:16px 18px 18px; } header{ padding:18px 20px; } }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div id="pending-view">
-    <div class="spinner"></div>
-    <h2>Zahlung wird geprueft ...</h2>
-    <p>Das kann je nach Kryptowaehrung ein paar Minuten dauern, bis genuegend Bestaetigungen vorliegen.</p>
-    <p>Dieses Fenster bitte offen lassen - es aktualisiert sich automatisch.</p>
-  </div>
+<header>
+  <a class="brand" href="index.html" id="brand"></a>
+</header>
 
-  <div id="paid-view" class="hidden">
-    <h2>Zahlung bestaetigt</h2>
-    <p>Dein Lizenzschluessel:</p>
-    <div class="license-box" id="license-key"></div>
-    <a class="btn" id="download-btn" href="#">Tool herunterladen</a>
+<main>
 
-    <div class="info" id="info-box">
-      <h3>So geht's weiter</h3>
-      <ol>
-        <li>ZIP-Datei entpacken</li>
-        <li>Doppelklick auf "Installieren.vbs" ausfuehren</li>
-        <li>Beim ersten Start des Tools den obigen Lizenzschluessel eingeben</li>
-        <li>Die Datei "Anleitung.txt" in der ZIP enthaelt alle weiteren Details</li>
-      </ol>
-      <p class="support">Bei Problemen oder Fragen: einfach ueber Discord melden.</p>
+  <!-- Zahlung wird geprüft (auch bei unvollständiger Zahlung: die Seite aktualisiert sich weiter) -->
+  <section id="view-pending" aria-live="polite">
+    <div class="loader" id="loader"></div>
+    <h1 id="pending-title">Zahlung wird geprüft</h1>
+    <p class="lead" id="pending-text">Je nach Kryptowährung dauert es ein paar Minuten, bis genug Bestätigungen vorliegen.</p>
+    <p class="lead">Lass dieses Fenster offen. Die Seite aktualisiert sich selbst.</p>
+  </section>
+
+  <!-- Bezahlt -->
+  <section id="view-paid" class="hidden">
+    <h1>Zahlung bestätigt</h1>
+    <p class="lead">Dein Lizenzschlüssel und der Download sind bereit.</p>
+
+    <div class="sticker">
+      <div class="sticker-head">Lizenzschlüssel</div>
+      <div class="key" id="license-key"></div>
+      <svg class="barcode" id="barcode" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="sticker-foot">
+        <button class="btn btn-ink" id="copy-btn" type="button">Schlüssel kopieren</button>
+        <p>Gilt für genau einen PC. Bewahre ihn sicher auf.</p>
+      </div>
     </div>
+
+    <div class="actions">
+      <a class="btn btn-gold" id="download-btn" href="#">Tool herunterladen</a>
+    </div>
+
+    <div class="next" id="next">
+      <h2>So geht es weiter</h2>
+      <ol>
+        <li>ZIP-Datei entpacken.</li>
+        <li>„Installieren.vbs“ doppelklicken.</li>
+        <li>Beim ersten Start den Lizenzschlüssel eingeben.</li>
+        <li>Alle weiteren Details stehen in der „Anleitung.txt“ in der ZIP.</li>
+      </ol>
+      <p class="hint">Setze dir ein Lesezeichen für diese Seite. Über den Link kommst du jederzeit wieder an Schlüssel und Download. Bei Fragen melde dich <a id="discord-paid" target="_blank" rel="noopener">über Discord</a>.</p>
+    </div>
+  </section>
+
+  <!-- Abgelaufen / fehlgeschlagen / nicht gefunden -->
+  <section id="view-problem" class="hidden">
+    <h1 id="problem-title"></h1>
+    <p class="lead" id="problem-text"></p>
+    <p class="lead" id="problem-text2"></p>
+    <div class="actions">
+      <a class="btn btn-gold" id="problem-primary" href="index.html#preis"></a>
+      <a class="btn btn-line" id="discord-problem" target="_blank" rel="noopener">Über Discord melden</a>
+    </div>
+  </section>
+
+  <div class="order hidden" id="order-info">
+    Bestellnummer, falls du dich meldest:
+    <code id="order-id"></code>
   </div>
 
-  <div id="problem-view" class="hidden">
-    <h2 id="problem-title"></h2>
-    <p id="problem-text"></p>
-    <p class="order-ref">Bestell-ID: <span id="problem-order-id"></span></p>
-    <a class="btn" id="problem-btn" href="index.html">Zurueck zur Startseite</a>
-  </div>
-
-  <div id="error-view" class="hidden">
-    <h2>Bestellung nicht gefunden</h2>
-    <p class="error">Diese Bestellung konnte nicht gefunden werden. Falls du bereits bezahlt hast, melde dich bitte ueber Discord.</p>
-  </div>
-</div>
+</main>
 
 <script>
   // =====================================================================
-  // BEARBEITBAR: API-URL deines Apps-Script-Servers
+  // BEARBEITBAR
   // =====================================================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbw0XvYlXlFoW7YwqrEaZhrmXVtBWdwK77b5K-sgLuY4RyweIoI2lU0V3Mohh9_868bM/exec";
+  const API_URL     = "https://script.google.com/macros/s/AKfycbw0XvYlXlFoW7YwqrEaZhrmXVtBWdwK77b5K-sgLuY4RyweIoI2lU0V3Mohh9_868bM/exec";
+  const DISCORD_URL = "https://discord.com/users/1548726102128599062";
+  const BRAND       = "Nauru-Wlan";
 
-  const params = new URLSearchParams(window.location.search);
-  const orderId = params.get("orderId");
-
-  const pendingView = document.getElementById("pending-view");
-  const paidView = document.getElementById("paid-view");
-  const errorView = document.getElementById("error-view");
-  const licenseKeyBox = document.getElementById("license-key");
-  const downloadBtn = document.getElementById("download-btn");
-  const infoBox = document.getElementById("info-box");
-  const problemView = document.getElementById("problem-view");
-
+  // Texte für die Problem-Zustände
   const PROBLEMS = {
     expired: {
-      title: "Zahlung abgelaufen",
-      text: "Die Zahlungsfrist ist abgelaufen, es wurde nichts abgebucht. Du kannst jederzeit eine neue Bestellung starten. Falls du doch bezahlt hast, melde dich bitte ueber Discord und nenne die Bestell-ID unten.",
-      retry: true
+      title: "Zahlungsfrist abgelaufen",
+      text:  "Für diese Bestellung ist keine vollständige Zahlung eingegangen, bevor die Frist endete.",
+      text2: "Hast du nichts gesendet, starte eine neue Bestellung. Hast du bezahlt, melde dich mit der Bestellnummer.",
+      primary: "Neue Bestellung starten"
     },
     failed: {
       title: "Zahlung fehlgeschlagen",
-      text: "Die Zahlung konnte nicht abgeschlossen werden. Du kannst eine neue Bestellung starten. Falls Geld abgebucht wurde, melde dich bitte ueber Discord und nenne die Bestell-ID unten.",
-      retry: true
+      text:  "Die Zahlung wurde nicht abgeschlossen.",
+      text2: "Starte eine neue Bestellung. Wurde dir Geld abgebucht, melde dich mit der Bestellnummer.",
+      primary: "Neue Bestellung starten"
     },
-    partially_paid: {
-      title: "Zahlung unvollstaendig",
-      text: "Es ist bisher nur ein Teil des Betrags eingegangen. Bitte sende den fehlenden Restbetrag an dieselbe Adresse - diese Seite aktualisiert sich automatisch. Bei Fragen melde dich ueber Discord und nenne die Bestell-ID unten.",
-      retry: false
+    not_found: {
+      title: "Bestellung nicht gefunden",
+      text:  "Zu diesem Link gibt es keine Bestellung. Prüfe, ob du die vollständige Adresse aus dem Zahlungsvorgang verwendest.",
+      text2: "Hast du bereits bezahlt, melde dich bitte über Discord.",
+      primary: "Zur Startseite"
     }
   };
 
-  function showProblem(status) {
-    const p = PROBLEMS[status];
-    pendingView.classList.add("hidden");
-    problemView.classList.remove("hidden");
-    document.getElementById("problem-title").textContent = p.title;
-    document.getElementById("problem-text").textContent = p.text;
-    document.getElementById("problem-order-id").textContent = orderId;
-    document.getElementById("problem-btn").style.display = p.retry ? "inline-block" : "none";
+  // =====================================================================
+  function starSVG(size, fill){
+    const pts = [];
+    for (let i = 0; i < 24; i++){
+      const r = i % 2 === 0 ? 11.6 : 6.4, a = Math.PI * i / 12 - Math.PI / 2;
+      pts.push((12 + r * Math.cos(a)).toFixed(2) + ',' + (12 + r * Math.sin(a)).toFixed(2));
+    }
+    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" aria-hidden="true"><polygon points="' + pts.join(' ') + '" fill="' + fill + '"/></svg>';
+  }
+  const $ = id => document.getElementById(id);
+
+  $('brand').innerHTML = starSVG(26, '#F4C22B') + '<span>' + BRAND + '</span>';
+  $('loader').innerHTML = starSVG(56, '#F4C22B');
+  $('discord-paid').href = DISCORD_URL;
+  $('discord-problem').href = DISCORD_URL;
+
+  const params  = new URLSearchParams(window.location.search);
+  const orderId = params.get("orderId");
+
+  const views = { pending: $('view-pending'), paid: $('view-paid'), problem: $('view-problem') };
+  function show(name){
+    Object.keys(views).forEach(k => views[k].classList.toggle('hidden', k !== name));
+  }
+  function showOrder(){
+    if (!orderId) return;
+    $('order-id').textContent = orderId;
+    $('order-info').classList.remove('hidden');
+  }
+  function showProblem(kind){
+    const p = PROBLEMS[kind];
+    $('problem-title').textContent = p.title;
+    $('problem-text').textContent = p.text;
+    $('problem-text2').textContent = p.text2;
+    $('problem-primary').textContent = p.primary;
+    $('problem-primary').href = kind === 'not_found' ? 'index.html' : 'index.html#preis';
+    show('problem');
+    if (kind !== 'not_found') showOrder();
   }
 
-  if (!orderId) {
-    pendingView.classList.add("hidden");
-    errorView.classList.remove("hidden");
-  } else {
-    checkStatus();
+  function drawBarcode(str){
+    const svg = $('barcode'); let x = 0, r = '';
+    const bar = w => { r += '<rect x="' + x + '" y="0" width="' + w + '" height="40"/>'; x += w; };
+    bar(2); x += 1; bar(1); x += 2;
+    for (const ch of str.replace(/[^0-9A-Za-z]/g, '')){
+      const v = ch.charCodeAt(0) & 15;
+      for (let b = 3; b >= 0; b--){ const bit = (v >> b) & 1; bar(bit ? 3 : 1); x += bit ? 1 : 2; }
+    }
+    bar(1); x += 1; bar(2);
+    svg.setAttribute('viewBox', '0 0 ' + x + ' 40');
+    svg.innerHTML = r;
   }
 
-  function checkStatus() {
-    fetch(`${API_URL}?action=check_order&orderId=${encodeURIComponent(orderId)}`)
+  $('copy-btn').addEventListener('click', async () => {
+    const key = $('license-key').textContent, btn = $('copy-btn');
+    try { await navigator.clipboard.writeText(key); }
+    catch (e) {
+      const range = document.createRange(); range.selectNodeContents($('license-key'));
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      try { document.execCommand('copy'); } catch (_) {}
+    }
+    btn.textContent = 'Kopiert';
+    setTimeout(() => { btn.textContent = 'Schlüssel kopieren'; }, 2000);
+  });
+
+  function checkStatus(){
+    fetch(API_URL + '?action=check_order&orderId=' + encodeURIComponent(orderId))
       .then(r => r.json())
       .then(data => {
-        if (data.status === "paid") {
-          pendingView.classList.add("hidden");
-          problemView.classList.add("hidden");
-          paidView.classList.remove("hidden");
-          licenseKeyBox.style.display = "block";
-          licenseKeyBox.textContent = data.licenseKey;
-          downloadBtn.href = data.downloadUrl;
-          infoBox.style.display = "block";
-
-          downloadBtn.addEventListener("click", () => {
-            setTimeout(() => { infoBox.scrollIntoView({ behavior: "smooth" }); }, 500);
-          });
-        } else if (data.status === "not_found") {
-          pendingView.classList.add("hidden");
-          errorView.classList.remove("hidden");
-        } else if (data.status === "expired" || data.status === "failed") {
-          showProblem(data.status);
-        } else if (data.status === "partially_paid") {
-          showProblem("partially_paid");
-          setTimeout(checkStatus, 10000);
-        } else {
-          setTimeout(checkStatus, 5000);
+        switch (data.status) {
+          case 'paid':
+            $('license-key').textContent = data.licenseKey;
+            drawBarcode(data.licenseKey || '');
+            $('download-btn').href = data.downloadUrl;
+            show('paid');
+            break;
+          case 'partially_paid':
+            $('pending-title').textContent = 'Zahlung unvollständig';
+            $('pending-text').textContent = 'Es ist bereits ein Teil eingegangen, aber noch nicht der volle Betrag. Sende den Rest an dieselbe Adresse. Zu wenig heißt oft: Netzwerkgebühren wurden abgezogen.';
+            show('pending'); showOrder();
+            setTimeout(checkStatus, 8000);
+            break;
+          case 'expired':
+          case 'failed':
+          case 'not_found':
+            showProblem(data.status);
+            break;
+          default:
+            setTimeout(checkStatus, 5000);
         }
       })
-      .catch(() => {
-        setTimeout(checkStatus, 8000);
-      });
+      .catch(() => setTimeout(checkStatus, 8000));
   }
+
+  if (!orderId) { showProblem('not_found'); }
+  else { show('pending'); checkStatus(); }
 </script>
 
 </body>
