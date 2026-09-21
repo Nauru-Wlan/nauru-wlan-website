@@ -99,6 +99,9 @@
   .nav-links{ display:flex; gap:30px; font-size:.95rem; color:var(--on-blue-muted); margin-left:auto; }
   .nav-links a{ text-decoration:none; }
   .nav-links a:hover{ color:#fff; text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px; }
+  /* Aktiver Bereich (Scroll-Markierung): weiss + goldene Unterstreichung */
+  .nav-links a.active{ color:#fff; text-decoration:underline; text-decoration-color:var(--gold); text-underline-offset:5px; text-decoration-thickness:2px; }
+  .nav-links a.active:hover{ text-decoration-color:#fff; }
   .nav-cta{ padding:10px 20px; font-size:.95rem; --lift:4px; }
 
   /* ---------------- HERO ---------------- */
@@ -676,6 +679,31 @@ const CONTENT = {
     $('nav-links').appendChild(a);
   });
   $('nav-cta').href = C.nav.ctaHref; $('nav-cta').textContent = C.nav.ctaLabel;
+
+  // Scroll-Markierung: hebt im Menue den Bereich hervor, in dem man gerade ist
+  (function(){
+    const links = Array.from($('nav-links').querySelectorAll('a[href^="#"]'));
+    const items = links.map(a => ({ a, sec: document.getElementById(a.getAttribute('href').slice(1)) })).filter(x => x.sec);
+    if (!items.length) return;
+    const navH = () => (document.querySelector('.nav') || {offsetHeight:66}).offsetHeight;
+    let ticking = false;
+    function update(){
+      ticking = false;
+      const line = navH() + Math.min(160, window.innerHeight * 0.25);
+      let current = null;
+      items.forEach(x => { if (x.sec.getBoundingClientRect().top <= line) current = x; });
+      // ganz unten auf der Seite: letzten Bereich markieren
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = items[items.length - 1];
+      items.forEach(x => {
+        const on = x === current;
+        x.a.classList.toggle('active', on);
+        if (on) x.a.setAttribute('aria-current', 'true'); else x.a.removeAttribute('aria-current');
+      });
+    }
+    window.addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } }, { passive:true });
+    window.addEventListener('resize', update);
+    update();
+  })();
 
   $('chip-a').textContent = C.hero.chip[0];
   $('chip-b').textContent = C.hero.chip[1];
