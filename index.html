@@ -198,14 +198,17 @@
   .why .text{ margin-top:22px; color:var(--muted); max-width:52ch; }
   .table-scroll{ overflow-x:auto; }
   .cmp{ width:100%; border-collapse:collapse; }
-  .cmp th{ text-align:left; font-weight:650; font-size:.95rem; padding:0 20px 14px 0; color:var(--muted); white-space:nowrap; }
-  .cmp tbody th{ color:var(--ink); font-size:1rem; padding:18px 20px 18px 0; border-top:1.5px solid var(--line-light); }
-  .cmp td{ padding:18px 20px 18px 0; border-top:1.5px solid var(--line-light); white-space:nowrap; }
+  .cmp th{ text-align:left; font-weight:650; font-size:.95rem; padding:0 16px 14px 0; color:var(--muted); white-space:nowrap; }
+  .cmp tbody th{ color:var(--ink); font-size:1rem; padding:18px 16px 18px 0; border-top:1.5px solid var(--line-light); white-space:nowrap; vertical-align:top; }
+  .cmp td{ padding:18px 16px 18px 0; border-top:1.5px solid var(--line-light); vertical-align:top; }
   .cmp .m{ font-family:var(--mono); font-size:.84rem; }
+  /* Adresse und Tag stehen nebeneinander, das Tag rutscht bei wenig Platz darunter - so ist nie Scrollen noetig */
+  .cmp .cell{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; }
+  .cmp .cell > span:first-child{ white-space:nowrap; }
   .cmp .same{ background:linear-gradient(transparent 60%, rgba(244,194,43,.85) 60%); }
   .tag{
-    display:inline-block; margin-left:10px; padding:3px 8px; border-radius:999px;
-    font-family:var(--mono); font-size:.64rem; font-weight:600; letter-spacing:0; vertical-align:2px;
+    display:inline-block; padding:3px 8px; border-radius:999px;
+    font-family:var(--mono); font-size:.64rem; font-weight:600; letter-spacing:0;
   }
   .tag.bad{ background:var(--gold); color:var(--ink); }
   .tag.good{ background:var(--tief); color:var(--signal); }
@@ -333,6 +336,13 @@
   }
   @media (max-width:520px){
     .wrap{ padding:0 20px; }
+    /* Schmale Handys: jede Zeile wird zur kleinen Karte, Ohne/Mit-Tool stehen untereinander */
+    .cmp, .cmp tbody, .cmp tr, .cmp th, .cmp td{ display:block; }
+    .cmp thead{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+    .cmp tr{ border-top:1.5px solid var(--line-light); padding:16px 0 6px; }
+    .cmp tbody th{ border-top:0; padding:0 0 10px; }
+    .cmp td{ border-top:0; padding:0 0 12px; }
+    .cmp td::before{ content:attr(data-label); display:block; font-family:var(--sans); font-size:.8rem; font-weight:650; color:var(--muted); margin-bottom:4px; }
     .steps{ grid-template-columns:1fr; }
     .sticker{ padding:16px 18px 18px; }
     .chip{ font-size:.66rem; padding:6px 11px; }
@@ -687,12 +697,14 @@ const CONTENT = {
   });
   C.context.rows.forEach(r => {
     const tr = document.createElement('tr');
-    tr.innerHTML = '<th scope="row"></th><td class="m"><span class="same"></span><span class="tag bad"></span></td><td class="m"><span></span><span class="tag good"></span></td>';
+    tr.innerHTML = '<th scope="row"></th><td class="m" data-label=""><div class="cell"><span class="same"></span><span class="tag bad"></span></div></td><td class="m" data-label=""><div class="cell"><span></span><span class="tag good"></span></div></td>';
     tr.children[0].textContent = r.net;
-    tr.children[1].children[0].textContent = C.context.sameMac;
-    tr.children[1].children[1].textContent = C.context.tagBad;
-    tr.children[2].children[0].textContent = r.fresh;
-    tr.children[2].children[1].textContent = C.context.tagGood;
+    tr.children[1].dataset.label = C.context.tableHead[1];
+    tr.children[2].dataset.label = C.context.tableHead[2];
+    tr.children[1].children[0].children[0].textContent = C.context.sameMac;
+    tr.children[1].children[0].children[1].textContent = C.context.tagBad;
+    tr.children[2].children[0].children[0].textContent = r.fresh;
+    tr.children[2].children[0].children[1].textContent = C.context.tagGood;
     $('cmp-body').appendChild(tr);
   });
   $('cmp-note').textContent = C.context.note;
