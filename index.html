@@ -6,11 +6,24 @@
 <meta name="theme-color" content="#1A2FA0">
 <meta name="description" content="Nauru-Wlan: Windows-Tool, das per Klick eine neue, zufällige MAC-Adresse für LAN oder WLAN setzt. Einmalig 10 €, Bezahlung per Krypto.">
 <title>Nauru-Wlan – Neue MAC-Adresse per Klick</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="icon" id="favicon" href="data:,">
 <style>
+  @font-face{
+    font-family:'Bricolage Grotesque';
+    font-style:normal; font-display:swap; font-weight:200 800;
+    src:url('fonts/bricolage-grotesque-variable.woff2') format('woff2-variations');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
+  @font-face{
+    font-family:'Martian Mono';
+    font-style:normal; font-display:swap; font-weight:400;
+    src:url('fonts/martian-mono-400.woff2') format('woff2');
+  }
+  @font-face{
+    font-family:'Martian Mono';
+    font-style:normal; font-display:swap; font-weight:600;
+    src:url('fonts/martian-mono-600.woff2') format('woff2');
+  }
 
   /* =====================================================================
      DESIGN-TOKENS
@@ -322,9 +335,14 @@
 
   /* ---------------- FOOTER ---------------- */
   footer{ background:var(--tief); color:var(--on-blue-muted); padding:36px 0 40px; border-top:1px solid var(--line-dark); }
-  footer .wrap{ display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; gap:16px 28px; flex-wrap:wrap; }
   footer .brand{ color:#fff; font-size:1.05rem; }
   footer p{ font-size:.9rem; max-width:58ch; }
+  .footer-meta{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+  .footer-links{ display:flex; gap:18px; font-size:.85rem; }
+  .footer-links a{ text-decoration:underline; text-decoration-color:var(--line-dark); text-underline-offset:3px; }
+  .footer-links a:hover{ text-decoration-color:var(--gold); color:#fff; }
+  @media (max-width:520px){ .footer-meta{ align-items:flex-start; } }
 
   /* ---------------- RESPONSIVE ---------------- */
   @media (max-width:920px){
@@ -643,7 +661,13 @@ const CONTENT = {
 <footer>
   <div class="wrap">
     <span class="brand" id="footer-brand"></span>
-    <p id="footer-note"></p>
+    <div class="footer-meta">
+      <p id="footer-note"></p>
+      <nav class="footer-links" aria-label="Rechtliches">
+        <a href="rechtliches.html#impressum">Impressum</a>
+        <a href="rechtliches.html#datenschutz">Datenschutz</a>
+      </nav>
+    </div>
   </div>
 </footer>
 

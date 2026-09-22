@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A2FA0">
+<meta name="robots" content="noindex, follow">
+<title>Impressum &amp; Datenschutz – Nauru-Wlan</title>
+<style>
+  @font-face{
+    font-family:'Bricolage Grotesque';
+    font-style:normal; font-display:swap; font-weight:200 800;
+    src:url('fonts/bricolage-grotesque-variable.woff2') format('woff2-variations');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
+  @font-face{
+    font-family:'Martian Mono';
+    font-style:normal; font-display:swap; font-weight:400;
+    src:url('fonts/martian-mono-400.woff2') format('woff2');
+  }
+  @font-face{
+    font-family:'Martian Mono';
+    font-style:normal; font-display:swap; font-weight:600;
+    src:url('fonts/martian-mono-600.woff2') format('woff2');
+  }
+  :root{
+    --blau:#1A2FA0; --blau-2:#13258A; --tief:#0B1657; --ink:#0C1240; --gold:#F4C22B;
+    --muted:#4A5178; --papier:#EEF0F5;
+    --on-blue-muted:rgba(255,255,255,.78); --line-dark:rgba(255,255,255,.22); --line-light:rgba(12,18,64,.18);
+    --grid:rgba(255,255,255,.075);
+    --sans:'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono:'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  }
+  *{ box-sizing:border-box; }
+  html{ height:100%; }
+  body{
+    margin:0; min-height:100%; color:var(--ink); background:var(--papier);
+    font-family:var(--sans); font-optical-sizing:auto; font-size:1.0625rem; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--gold); color:var(--ink); }
+  h1,h2{ margin:0; line-height:1.1; letter-spacing:-.025em; font-weight:750; }
+  p{ margin:0 0 16px; }
+  p:last-child{ margin-bottom:0; }
+  a{ color:var(--blau); text-underline-offset:3px; }
+  :focus-visible{ outline:3px solid var(--gold); outline-offset:3px; border-radius:4px; }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  header{ position:relative; background:linear-gradient(180deg, var(--blau) 0%, var(--blau-2) 100%); color:#fff; padding:36px 28px 44px; overflow:hidden; }
+  header::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:56px 56px;
+  }
+  header .inner{ position:relative; max-width:720px; margin:0 auto; }
+  .brand{ display:inline-flex; align-items:center; gap:10px; font-weight:750; font-size:1.15rem; letter-spacing:-.02em; text-decoration:none; color:#fff; }
+  .brand svg{ display:block; }
+  header h1{ margin-top:22px; font-size:clamp(1.7rem,4vw,2.3rem); }
+  .stripe{ height:8px; background:var(--gold); }
+
+  main{ max-width:720px; margin:0 auto; padding:clamp(32px,6vw,56px) 28px 80px; }
+  section{ margin-bottom:56px; }
+  section:last-child{ margin-bottom:0; }
+  section > h2{ font-size:clamp(1.4rem,3vw,1.8rem); margin-bottom:6px; }
+  .kicker{ font-family:var(--mono); font-size:.72rem; letter-spacing:.02em; color:var(--muted); margin-bottom:4px; }
+  h3{ font-size:1.1rem; font-weight:650; letter-spacing:-.01em; margin:28px 0 8px; }
+  ul{ margin:0 0 16px; padding-left:22px; }
+  li{ margin-bottom:6px; }
+  .placeholder{
+    background:#FDF3D6; border:1.5px dashed #C9971E; border-radius:8px;
+    padding:14px 16px; font-size:.92rem; color:#6B4E05; margin:14px 0;
+  }
+  .placeholder strong{ color:#4A3600; }
+  .field{ font-family:var(--mono); font-size:.86rem; background:#fff; border:1px solid var(--line-light); border-radius:6px; padding:2px 8px; }
+  .toc{ list-style:none; margin:20px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:10px 18px; font-size:.92rem; }
+  .toc a{ text-decoration:none; color:var(--on-blue-muted); }
+  .toc a:hover{ color:#fff; text-decoration:underline; }
+  .divider{ border:0; border-top:1.5px solid var(--line-light); margin:56px 0; }
+  .back{ display:inline-block; margin-top:8px; font-size:.92rem; text-decoration:none; }
+
+  @media (max-width:520px){ main{ padding:28px 20px 64px; } header{ padding:28px 20px 36px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="brand" href="index.html" id="brand-link">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"></svg>
+      <span>Nauru-Wlan</span>
+    </a>
+    <h1>Impressum &amp; Datenschutzerklärung</h1>
+    <ul class="toc">
+      <li><a href="#impressum">Impressum</a></li>
+      <li><a href="#datenschutz">Datenschutzerklärung</a></li>
+    </ul>
+  </div>
+</header>
+<div class="stripe" aria-hidden="true"></div>
+
+<main>
+
+<section id="impressum">
+  <p class="kicker">Angaben gemäß § 5 DDG</p>
+  <h2>Impressum</h2>
+
+  <div class="placeholder">
+    <strong>Noch nicht ausgefüllt.</strong> Diese Seite darf erst live gehen, wenn hier echte,
+    ladungsfähige Angaben stehen. Ein Pseudonym oder eine Postfachadresse reicht rechtlich nicht aus.
+    Am besten erst nach der Gewerbeanmeldung ausfüllen und kurz von einem Anwalt oder
+    Steuerberater gegenlesen lassen.
+  </div>
+
+  <h3>Angaben zur Anbieterin / zum Anbieter</h3>
+  <p>
+    <span class="field">Vor- und Nachname</span><br>
+    <span class="field">Straße und Hausnummer</span><br>
+    <span class="field">Postleitzahl, Ort</span><br>
+    <span class="field">Land</span>
+  </p>
+
+  <h3>Kontakt</h3>
+  <p>
+    E-Mail: <span class="field">deine-adresse@beispiel.de</span><br>
+    Discord: siehe Landingpage
+  </p>
+
+  <h3>Umsatzsteuer</h3>
+  <p>
+    <span class="field">Falls Kleinunternehmerregelung (§ 19 UStG) genutzt wird: „Gemäß § 19 UStG wird
+    keine Umsatzsteuer berechnet.“ Andernfalls Umsatzsteuer-Identifikationsnummer eintragen.</span>
+  </p>
+
+  <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+  <p>
+    <span class="field">Name und Anschrift wie oben</span>
+  </p>
+
+  <h3>Streitschlichtung</h3>
+  <p>
+    Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+    <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>.
+    Zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle sind
+    wir nicht verpflichtet und nicht bereit.
+  </p>
+</section>
+
+<hr class="divider">
+
+<section id="datenschutz">
+  <p class="kicker">Stand: <span class="field">Datum beim Veröffentlichen eintragen</span></p>
+  <h2>Datenschutzerklärung</h2>
+
+  <h3>1. Verantwortlicher</h3>
+  <p>
+    Verantwortlich für die Datenverarbeitung auf dieser Website ist die im
+    <a href="#impressum">Impressum</a> genannte Person.
+  </p>
+
+  <h3>2. Übersicht der Verarbeitungen</h3>
+  <p>
+    Diese Website ist bewusst schlank gehalten: Es gibt kein Nutzerkonto, kein Tracking, keine
+    Analyse-Tools und keine Werbe-Cookies. Personenbezogene Daten fallen nur an drei Stellen an:
+    beim Laden der Schriftarten, beim Klick auf „Jetzt kaufen“ und bei der Zahlungsabwicklung
+    selbst.
+  </p>
+
+  <h3>3. Hosting (GitHub Pages)</h3>
+  <p>
+    Diese Website wird über GitHub Pages ausgeliefert (GitHub, Inc., 88 Colin P. Kelly Jr. St,
+    San Francisco, CA 94107, USA). Beim Aufruf verarbeitet GitHub automatisch Server-Logs
+    (u. a. IP-Adresse, Datum und Uhrzeit des Zugriffs), um die Auslieferung technisch zu
+    ermöglichen. Diese Verarbeitung liegt außerhalb unserer Kontrolle; Details stehen im
+    <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzhinweis von GitHub</a>.
+    Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer stabilen,
+    kostengünstigen Bereitstellung der Seite).
+  </p>
+
+  <h3>4. Schriftarten (Google Fonts)</h3>
+  <p>
+    Diese Seite lädt die Schriftarten „Bricolage Grotesque“ und „Martian Mono“ direkt von den
+    Servern von Google (Google Ireland Limited). Dabei wird die IP-Adresse des aufrufenden Geräts
+    an Google übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Wer das vermeiden möchte,
+    kann einen Browser-Zusatz zum Blockieren externer Schriftarten nutzen; die Seite bleibt dann
+    mit der System-Schriftart lesbar.
+  </p>
+  <div class="placeholder">
+    <strong>Empfehlung, kein Muss:</strong> Die Schriftarten lassen sich auch selbst hosten
+    (Dateien lokal einbinden statt von Google laden). Dann entfällt dieser Abschnitt komplett
+    und es fließen keine Daten an Google ab. Sag Bescheid, wenn das gewünscht ist, das ist eine
+    kleine Änderung an <span class="field">index.html</span> und <span class="field">success.html</span>.
+  </div>
+
+  <h3>5. Bestellung und Zahlungsabwicklung</h3>
+  <p>
+    Beim Klick auf „Jetzt kaufen“ wird eine Bestellung bei unserem Server (Google Apps Script)
+    angelegt und eine Zahlungsseite bei unserem Zahlungsdienstleister NOWPayments erzeugt. Dabei
+    verarbeitet NOWPayments die für die Krypto-Zahlung nötigen Daten (u. a. IP-Adresse,
+    Wallet-Adresse, Zahlungsbetrag). Details stehen in der
+    <a href="https://nowpayments.io/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung von NOWPayments</a>.
+    Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).
+  </p>
+  <p>
+    Unser eigener Server speichert zur Bestellung: eine zufällig erzeugte Bestellnummer, den
+    Zahlungsstatus und den erzeugten Lizenzschlüssel. Eine E-Mail-Adresse wird von Käuferinnen
+    und Käufern nicht abgefragt.
+  </p>
+
+  <h3>6. Google Sheets / Google Apps Script</h3>
+  <p>
+    Bestell- und Lizenzdaten werden in einer Google-Tabelle verwaltet, die über ein Google-Apps-Script
+    angesteuert wird (Google Ireland Limited, ggf. Verarbeitung auf Servern außerhalb der EU).
+    Verarbeitet werden: Bestellnummer, Zahlungsstatus, Lizenzschlüssel sowie ein aus
+    Geräte-Kennungen gebildeter SHA-256-Hash (siehe Punkt 7). Rechtsgrundlage ist Art. 6 Abs. 1
+    lit. b und f DSGVO.
+  </p>
+
+  <h3>7. Lizenzprüfung durch das Tool</h3>
+  <p>
+    Das Windows-Tool bildet bei der Aktivierung aus der System-UUID und der BIOS-Seriennummer des
+    Geräts einen Einweg-Hash (SHA-256) und sendet diesen zusammen mit dem Lizenzschlüssel an
+    unseren Server, um die Lizenz an genau ein Gerät zu binden. Aus diesem Hash lässt sich das
+    Ausgangsgerät nicht zurückrechnen. Diese Prüfung läuft bei jedem Programmstart erneut.
+    Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung, Verhinderung der
+    unerlaubten Weitergabe einer Einzelplatz-Lizenz).
+  </p>
+
+  <h3>8. Cookies und lokale Speicherung</h3>
+  <p>
+    Diese Website selbst setzt keine Cookies. Das Windows-Tool speichert lokal auf dem Gerät der
+    Nutzerin oder des Nutzers zwei kleine Dateien: eine Liste bereits vergebener MAC-Adressen und
+    den eingegebenen Lizenzschlüssel. Diese Dateien verlassen das Gerät nicht und werden nicht an
+    uns übertragen.
+  </p>
+
+  <h3>9. Speicherdauer</h3>
+  <p>
+    Bestelldaten im Status „offen“, „abgelaufen“ oder „fehlgeschlagen“ werden automatisiert nach
+    30 Tagen gelöscht. Abgeschlossene Bestellungen (bezahlt oder teilbezahlt) werden nicht
+    automatisch gelöscht, da sie für eventuelle Rückfragen benötigt werden.
+  </p>
+
+  <h3>10. Rechte der betroffenen Personen</h3>
+  <p>
+    Es besteht das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16 DSGVO), Löschung
+    (Art. 17 DSGVO), Einschränkung der Verarbeitung (Art. 18 DSGVO), Datenübertragbarkeit
+    (Art. 20 DSGVO) sowie Widerspruch gegen die Verarbeitung (Art. 21 DSGVO). Anfragen dazu bitte
+    über den im Impressum genannten Kontaktweg. Da die Lizenz über eine Bestellnummer, nicht über
+    einen Namen zugeordnet ist, wird für eine Auskunft die Bestellnummer benötigt.
+  </p>
+  <p>
+    Zudem besteht ein Beschwerderecht bei einer Datenschutz-Aufsichtsbehörde, z. B. der für den
+    eigenen Wohnort zuständigen Landesdatenschutzbehörde.
+  </p>
+
+  <a class="back" href="index.html">← Zurück zur Startseite</a>
+</section>
+
+</main>
+
+<script>
+  document.getElementById('brand-link').querySelector('svg').innerHTML =
+    '<rect width="24" height="24" rx="5" fill="#1A2FA0"/>' +
+    (function(){
+      var pts=[];
+      for (var i=0;i<24;i++){
+        var r = i%2===0 ? 8.3 : 4.6, a = Math.PI*i/12 - Math.PI/2;
+        pts.push((12+r*Math.cos(a)).toFixed(2)+','+(12+r*Math.sin(a)).toFixed(2));
+      }
+      return '<polygon points="'+pts.join(' ')+'" fill="#F4C22B"/>';
+    })();
+</script>
+
+</body>
+</html>
