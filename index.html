@@ -299,6 +299,61 @@
   .facts span.d{ color:var(--on-blue-muted); }
   .facts a{ display:block; width:fit-content; margin-top:10px; color:var(--gold); font-weight:600; text-underline-offset:4px; }
 
+  /* ---------------- BEWERTUNGEN ---------------- */
+  .reviews{ padding:clamp(52px,7vw,88px) 0; --focus:var(--blau); }
+  .reviews-grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(32px,5vw,64px); align-items:start; }
+  .reviews-intro h2{ font-size:clamp(1.5rem,2.6vw,2.05rem); }
+  .reviews-intro .text{ margin-top:14px; color:var(--muted); max-width:42ch; }
+  .reviews-summary{ margin-top:26px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .rs-num{ font-family:var(--mono); font-weight:600; font-size:2.3rem; letter-spacing:-.02em; }
+  .rs-stars{ position:relative; width:132px; height:24px; flex:none; }
+  .rs-stars .row{ position:absolute; inset:0; display:flex; gap:4px; }
+  .rs-stars .row svg{ width:22px; height:22px; display:block; }
+  .rs-stars .bg svg polygon{ fill:rgba(12,18,64,.14); }
+  .rs-stars .fg{ width:0; overflow:hidden; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+  .rs-stars .fg svg polygon{ fill:var(--gold); }
+  .rs-count{ font-size:.92rem; color:var(--muted); }
+  .review-toggle{ margin-top:24px; }
+  .reviews-list{ list-style:none; margin:0; padding:0; display:grid; gap:14px; }
+  .review-card{
+    background:#fff; border:1.5px solid var(--line-light); border-radius:10px; padding:16px 18px;
+    opacity:0; transform:translateY(14px);
+  }
+  .review-card.in{ animation:cardIn .5s ease forwards; animation-delay:calc(var(--i,0) * 90ms); }
+  @keyframes cardIn{ to{ opacity:1; transform:translateY(0); } }
+  .rc-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:6px; }
+  .rc-name{ font-weight:650; font-size:.95rem; }
+  .rc-stars{ display:flex; gap:2px; flex:none; }
+  .rc-stars svg{ width:14px; height:14px; }
+  .rc-stars svg polygon{ fill:var(--gold); }
+  .rc-text{ color:var(--muted); font-size:.95rem; line-height:1.55; }
+  .reviews-empty{
+    font-size:.95rem; color:var(--muted); border:1.5px dashed var(--line-light); border-radius:10px;
+    padding:20px 18px;
+  }
+  .reviews-empty strong{ display:block; color:var(--ink); margin-bottom:4px; font-weight:650; }
+  .review-form-wrap{ margin-top:32px; }
+  .review-form{ max-width:560px; background:#fff; border-radius:14px; padding:26px 28px 28px; }
+  .rf-row{ margin-bottom:16px; }
+  .rf-row label, .rf-row > span.rf-label{ display:block; font-size:.85rem; font-weight:650; color:var(--muted); margin-bottom:6px; }
+  .rf-row input[type=text], .rf-row textarea{
+    width:100%; font:inherit; font-size:.98rem; padding:10px 12px; border:1.5px solid var(--line-light);
+    border-radius:8px; background:var(--papier); color:var(--ink); resize:vertical;
+  }
+  .rf-row input:focus-visible, .rf-row textarea:focus-visible{ outline:3px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+  .star-picker{ display:flex; gap:6px; }
+  .star-picker button{ background:none; border:0; padding:2px; cursor:pointer; line-height:0; }
+  .star-picker svg{ width:28px; height:28px; transition:transform .12s; }
+  .star-picker svg polygon{ fill:rgba(12,18,64,.16); transition:fill .12s; }
+  .star-picker button:hover svg, .star-picker button:focus-visible svg{ transform:scale(1.15); }
+  .star-picker button.sel svg polygon{ fill:var(--gold); }
+  .star-picker button.pop svg{ animation:starPop .32s ease; }
+  @keyframes starPop{ 40%{ transform:scale(1.4); } 100%{ transform:scale(1); } }
+  .rf-msg{ font-size:.9rem; font-weight:600; min-height:1.2em; margin:2px 0 16px; }
+  .rf-msg.err{ color:#B3261E; }
+  .rf-msg.ok{ color:var(--blau); }
+  @media (max-width:920px){ .reviews-grid{ grid-template-columns:1fr; } }
+
   /* ---------------- PREIS ---------------- */
   .pricing{ background:var(--gold); color:var(--ink); padding:clamp(64px,9vw,112px) 0; --focus:var(--ink); --br:var(--ink); }
   .price-grid{ display:grid; grid-template-columns:1.25fr .75fr; gap:clamp(32px,6vw,80px); align-items:center; }
@@ -388,6 +443,7 @@ const CONTENT = {
     links: [
       { label: "Funktionen", href: "#funktionen" },
       { label: "Sicherheit", href: "#sicherheit" },
+      { label: "Bewertungen", href: "#bewertungen" },
       { label: "Preis", href: "#preis" },
       { label: "FAQ", href: "#faq" }
     ],
@@ -485,6 +541,32 @@ const CONTENT = {
         linkHref: ""
       }
     ]
+  },
+
+  reviews: {
+    heading: "Was Kundinnen und Kunden sagen",
+    text: "Jede Bewertung wird vor der Veröffentlichung geprüft, gegen Spam und Beleidigungen, nicht gegen Kritik.",
+    avgLabel: "von 5",
+    countZero: "Noch keine Bewertungen",
+    countOne: "1 Bewertung",
+    countMany: "Bewertungen",
+    emptyTitle: "Noch nichts hier.",
+    emptyText: "Sei die oder der Erste, der eine Bewertung schreibt.",
+    toggleOpen: "Bewertung abgeben",
+    toggleClose: "Formular schließen",
+    formHeading: "Deine Bewertung",
+    nameLabel: "Name oder Kürzel (optional)",
+    namePlaceholder: "z. B. M. aus Köln",
+    ratingLabel: "Sterne",
+    textLabel: "Was war deine Erfahrung?",
+    textPlaceholder: "Kurz und ehrlich reicht.",
+    submitLabel: "Absenden",
+    submitBusy: "Wird gesendet ...",
+    submitDone: "Danke. Deine Bewertung wird geprüft und erscheint nach Freigabe.",
+    submitError: "Senden hat nicht geklappt. Versuch es später erneut oder melde dich über Discord.",
+    ratingRequired: "Bitte eine Sternebewertung auswählen.",
+    textRequired: "Bitte kurz beschreiben, was du erlebt hast.",
+    filterError: "Bitte ohne Beleidigungen formulieren, dann klappt's."
   },
 
   pricing: {
@@ -629,6 +711,52 @@ const CONTENT = {
       </div>
     </div>
     <ul class="facts" id="facts"></ul>
+  </div>
+</section>
+
+<section class="reviews" id="bewertungen">
+  <div class="wrap reviews-grid">
+    <div class="reviews-intro">
+      <h2 id="reviews-heading"></h2>
+      <p class="text" id="reviews-text"></p>
+      <div class="reviews-summary" id="reviews-summary">
+        <div class="rs-num" id="rs-avg">–</div>
+        <div class="rs-stars" id="rs-stars" aria-hidden="true">
+          <div class="row bg" id="rs-stars-bg"></div>
+          <div class="row fg" id="rs-stars-fg"><div class="row" id="rs-stars-fg-inner"></div></div>
+        </div>
+        <span class="rs-count" id="rs-count"></span>
+      </div>
+      <button class="btn btn-ink review-toggle" id="review-toggle" type="button"></button>
+    </div>
+
+    <div>
+      <ol class="reviews-list" id="reviews-list"></ol>
+      <div class="reviews-empty" id="reviews-empty" hidden>
+        <strong id="reviews-empty-title"></strong>
+        <span id="reviews-empty-text"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-form-wrap wrap" id="review-form-wrap" hidden>
+    <form class="review-form brackets" id="review-form" novalidate>
+      <h3 id="rf-heading" style="margin:0 0 18px; font-size:1.15rem;"></h3>
+      <div class="rf-row">
+        <label for="rf-name" id="rf-name-label"></label>
+        <input type="text" id="rf-name" maxlength="40" autocomplete="off">
+      </div>
+      <div class="rf-row">
+        <span class="rf-label" id="rf-rating-label"></span>
+        <div class="star-picker" id="star-picker" role="radiogroup"></div>
+      </div>
+      <div class="rf-row">
+        <label for="rf-text" id="rf-text-label"></label>
+        <textarea id="rf-text" maxlength="600" rows="3"></textarea>
+      </div>
+      <p class="rf-msg" id="rf-msg" role="alert" aria-live="polite"></p>
+      <button class="btn btn-gold" id="rf-submit" type="submit"></button>
+    </form>
   </div>
 </section>
 
@@ -835,6 +963,184 @@ const CONTENT = {
         err.textContent = C.pricing.errorText; err.style.display = 'block';
       }
     });
+  })();
+
+  /* =====================================================================
+     BEWERTUNGEN: Text aus CONTENT, Sterne-Widget im Marken-Stil (der
+     12-zackige Stern ist dasselbe Zeichen wie das Logo), Erstfilter gegen
+     offensichtliche Beleidigungen, Laden + Absenden ueber denselben Server
+     wie die Bestellung. WICHTIG: Dieser clientseitige Filter ist nur eine
+     Hoeflichkeitsbremse und kein Schutz - jede Bewertung muss zusaetzlich
+     serverseitig gefiltert UND von Hand freigegeben werden, bevor sie hier
+     jemals angezeigt wird. Ohne Backend-Anbindung zeigt der Bereich bis
+     auf Weiteres nur den leeren Zustand.
+  ===================================================================== */
+  (function(){
+    const R = C.reviews;
+    $('reviews-heading').textContent = R.heading;
+    $('reviews-text').textContent = R.text;
+    $('reviews-empty-title').textContent = R.emptyTitle;
+    $('reviews-empty-text').textContent = R.emptyText;
+    $('rf-heading').textContent = R.formHeading;
+    $('rf-name-label').textContent = R.nameLabel;
+    $('rf-name').placeholder = R.namePlaceholder;
+    $('rf-rating-label').textContent = R.ratingLabel;
+    $('rf-text-label').textContent = R.textLabel;
+    $('rf-text').placeholder = R.textPlaceholder;
+    $('rf-submit').textContent = R.submitLabel;
+
+    /* --- Sterne-Reihe (5x der Marken-Stern) fuer Durchschnitt + Karten --- */
+    function starPolygonPoints(){
+      const pts = [];
+      for (let i = 0; i < 24; i++){
+        const r = i % 2 === 0 ? 11.6 : 6.4, a = Math.PI * i / 12 - Math.PI / 2;
+        pts.push((12 + r * Math.cos(a)).toFixed(2) + ',' + (12 + r * Math.sin(a)).toFixed(2));
+      }
+      return pts.join(' ');
+    }
+    const STAR_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="' + starPolygonPoints() + '"/></svg>';
+    function starRow(n){ return STAR_SVG.repeat(n); }
+
+    $('rs-stars-bg').innerHTML = starRow(5);
+    $('rs-stars-fg-inner').innerHTML = starRow(5);
+
+    /* --- Sterne-Auswahlfeld im Formular --- */
+    const picker = $('star-picker');
+    let selectedRating = 0;
+    for (let v = 1; v <= 5; v++){
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.value = v;
+      b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false');
+      b.setAttribute('aria-label', v + ' von 5 Sternen');
+      b.innerHTML = STAR_SVG;
+      b.addEventListener('click', () => {
+        selectedRating = v;
+        Array.from(picker.children).forEach((el, i) => {
+          const on = i < v;
+          el.classList.toggle('sel', on);
+          el.setAttribute('aria-checked', on ? 'true' : 'false');
+        });
+        b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+      });
+      picker.appendChild(b);
+    }
+
+    /* --- Erstfilter: haelt nur die offensichtlichsten Faelle ab --- */
+    const BAD_WORDS = [
+      'hurensohn','wichser','fotze','schlampe','missgeburt','untermensch','ausrotten',
+      'kanacke','neger','judensau','zigeuner','behindert du','spast','mongo',
+      'nazischwein','fuck you','asshole','bitch','faggot','retard','nigger','cunt'
+    ];
+    function containsBadWord(text){
+      const norm = text.toLowerCase();
+      return BAD_WORDS.some(w => norm.includes(w));
+    }
+
+    /* --- Formular ein-/ausblenden --- */
+    const toggleBtn = $('review-toggle'), formWrap = $('review-form-wrap');
+    toggleBtn.textContent = R.toggleOpen;
+    toggleBtn.addEventListener('click', () => {
+      const willShow = formWrap.hidden;
+      formWrap.hidden = !willShow;
+      toggleBtn.textContent = willShow ? R.toggleClose : R.toggleOpen;
+      if (willShow){ formWrap.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); $('rf-name').focus(); }
+    });
+
+    /* --- Absenden --- */
+    const form = $('review-form'), msg = $('rf-msg'), submitBtn = $('rf-submit');
+    function setMsg(text, kind){ msg.textContent = text; msg.className = 'rf-msg' + (kind ? ' ' + kind : ''); }
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const name = $('rf-name').value.trim();
+      const text = $('rf-text').value.trim();
+      if (!selectedRating){ setMsg(R.ratingRequired, 'err'); return; }
+      if (text.length < 3){ setMsg(R.textRequired, 'err'); return; }
+      if (containsBadWord(name) || containsBadWord(text)){ setMsg(R.filterError, 'err'); return; }
+
+      submitBtn.disabled = true; const label = R.submitLabel; submitBtn.textContent = R.submitBusy;
+      try {
+        const url = C.pricing.apiUrl + '?action=submit_review'
+          + '&rating=' + selectedRating
+          + '&name=' + encodeURIComponent(name)
+          + '&text=' + encodeURIComponent(text);
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data || data.ok === false) throw new Error('rejected');
+        setMsg(R.submitDone, 'ok');
+        form.reset();
+        selectedRating = 0;
+        Array.from(picker.children).forEach(el => { el.classList.remove('sel'); el.setAttribute('aria-checked', 'false'); });
+        submitBtn.textContent = label;
+      } catch (e) {
+        setMsg(R.submitError, 'err');
+        submitBtn.textContent = label;
+      }
+      submitBtn.disabled = false;
+    });
+
+    /* --- Bestehende, bereits freigegebene Bewertungen laden --- */
+    const listEl = $('reviews-list'), emptyEl = $('reviews-empty');
+    let dataReady = false, sectionSeen = false, animated = false, avg = 0, count = 0;
+
+    function renderList(items){
+      if (!items || !items.length){
+        emptyEl.hidden = false;
+        return;
+      }
+      listEl.innerHTML = '';
+      items.forEach((it, i) => {
+        const li = document.createElement('li');
+        li.className = 'review-card';
+        li.style.setProperty('--i', i);
+        const stars = Math.max(0, Math.min(5, Math.round(it.rating || 0)));
+        li.innerHTML = '<div class="rc-head"><span class="rc-name"></span><span class="rc-stars"></span></div><p class="rc-text"></p>';
+        li.querySelector('.rc-name').textContent = it.name || 'Anonym';
+        li.querySelector('.rc-stars').innerHTML = starRow(stars);
+        li.querySelector('.rc-text').textContent = it.text || '';
+        listEl.appendChild(li);
+      });
+    }
+
+    function updateSummaryText(){
+      $('rs-count').textContent = count === 0 ? R.countZero : (count === 1 ? R.countOne : count + ' ' + R.countMany);
+    }
+
+    function animateSummary(){
+      if (animated || !dataReady || !sectionSeen) return;
+      animated = true;
+      if (count === 0){ $('rs-avg').textContent = '–'; return; }
+      const target = avg, dur = reduce ? 0 : 900, t0 = performance.now();
+      $('rs-stars-fg').style.width = (target / 5 * 100) + '%';
+      if (reduce){ $('rs-avg').textContent = target.toFixed(1); return; }
+      (function frame(now){
+        const p = Math.min(1, (now - t0) / dur);
+        $('rs-avg').textContent = (target * p).toFixed(1);
+        if (p < 1) requestAnimationFrame(frame);
+      })(t0);
+      Array.from(listEl.children).forEach(el => el.classList.add('in'));
+    }
+
+    fetch(C.pricing.apiUrl + '?action=get_reviews')
+      .then(res => res.json())
+      .then(data => {
+        const items = (data && Array.isArray(data.reviews)) ? data.reviews : [];
+        avg = (data && typeof data.avg === 'number') ? data.avg : 0;
+        count = (data && typeof data.count === 'number') ? data.count : items.length;
+        renderList(items);
+      })
+      .catch(() => { emptyEl.hidden = false; })
+      .finally(() => { dataReady = true; updateSummaryText(); animateSummary(); });
+
+    if ('IntersectionObserver' in window){
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (en.isIntersecting){ sectionSeen = true; animateSummary(); obs.disconnect(); }
+        });
+      }, { threshold: 0.35 });
+      obs.observe($('reviews-summary'));
+    } else {
+      sectionSeen = true;
+    }
   })();
 
   /* =====================================================================
