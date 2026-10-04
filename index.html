@@ -509,15 +509,15 @@ const CONTENT = {
   trust: {
     heading: "Prüf es selbst.",
     text: "Ein Tool, das Adminrechte braucht und sich selbst aktualisiert, verdient Skepsis. Deshalb liegt alles offen, auch das, was nicht perfekt aussieht.",
-    scanCaption: "7 von 64 Virenscannern melden einen generischen Verdacht. 57 melden nichts.",
+    scanCaption: "7 von 65 Virenscannern melden einen generischen Verdacht. 58 melden nichts.",
     scanHits: [5, 14, 22, 29, 41, 50, 58],
     items: [
       {
         title: "Öffentlicher Scan, unverändert",
         tag: "7 Treffer", tone: "note",
-        text: "Die 7 Treffer sind Heuristik-Meldungen wie „Trojan.Script.Generic“, keine bestätigte Bedrohung. Sie sind bei Skripten typisch, die Adminrechte anfordern und sich selbst aktualisieren.",
+        text: "Die 7 Treffer sind generische Heuristik-Meldungen. Fünf davon tragen denselben Erkennungsnamen („Boxter“), weitergereicht von mehreren Anbietern. Keine Meldung benennt einen konkreten Schädling. Das ist bei Skripten typisch, die Adminrechte anfordern und sich selbst aktualisieren.",
         linkLabel: "Scan-Ergebnis ansehen",
-        linkHref: "https://www.virustotal.com/gui/file/9876a2ef17a884489cad35d22231d48f99231377e71f79e1e95159a544a4e99a?nocache=1"
+        linkHref: "https://www.virustotal.com/gui/file/b8b6f5f1b3bb30c343165e285c40b46388ec2f0c09c13d14ccb80c046cc09b0b?nocache=1"
       },
       {
         title: "Quellcode auf GitHub",
@@ -706,7 +706,7 @@ const CONTENT = {
       <h2 id="trust-heading"></h2>
       <p class="text" id="trust-text"></p>
       <div class="vt" id="vt">
-        <div class="vt-grid" id="vt-grid" role="img" aria-label="64 Virenscanner, davon 7 mit generischem Verdacht"></div>
+        <div class="vt-grid" id="vt-grid" role="img" aria-label="65 Virenscanner, davon 7 mit generischem Verdacht"></div>
         <p id="vt-caption"></p>
       </div>
     </div>
@@ -908,7 +908,7 @@ const CONTENT = {
   $('trust-heading').textContent = C.trust.heading;
   $('trust-text').textContent = C.trust.text;
   $('vt-caption').textContent = C.trust.scanCaption;
-  for (let i = 0; i < 64; i++){
+  for (let i = 0; i < 65; i++){
     const c = document.createElement('span');
     c.style.setProperty('--i', i);
     const h = C.trust.scanHits.indexOf(i);
