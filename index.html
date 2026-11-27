@@ -369,6 +369,28 @@
   .buy-error{ margin-top:14px; font-weight:600; font-size:.95rem; display:none; }
   .fallback{ display:inline-block; margin-top:16px; font-size:.92rem; text-underline-offset:4px; }
 
+  /* ---------------- KRYPTO-ANLEITUNG ---------------- */
+  .guide{ padding:clamp(64px,9vw,112px) 0; --focus:var(--blau); }
+  .guide-grid{ display:grid; grid-template-columns:5fr 6fr; gap:clamp(36px,6vw,88px); align-items:start; }
+  .guide-grid > *{ min-width:0; }
+  .guide h2{ font-size:clamp(1.7rem,3vw,2.5rem); }
+  .guide .text{ margin-top:20px; color:var(--muted); max-width:46ch; }
+  .guide-note{ margin-top:22px; padding-top:16px; border-top:1.5px solid var(--line-light); font-size:.9rem; color:var(--muted); max-width:46ch; }
+  .guide-steps{ list-style:none; margin:0; padding:0; counter-reset:g; }
+  .guide-steps li{ counter-increment:g; position:relative; padding:20px 0 22px 68px; border-top:1.5px solid var(--line-light); }
+  .guide-steps li:last-child{ border-bottom:1.5px solid var(--line-light); }
+  .guide-steps li::before{
+    content:"0" counter(g); position:absolute; left:0; top:20px; width:50px; height:44px;
+    clip-path:polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    background:var(--gold); color:var(--ink); font-family:var(--mono); font-weight:600; font-size:.9rem;
+    display:grid; place-items:center;
+  }
+  .guide-steps h3{ font-size:1.2rem; letter-spacing:-.015em; margin-bottom:6px; }
+  .guide-steps p{ color:var(--muted); font-size:.98rem; max-width:52ch; }
+  .guide-link{ display:block; width:fit-content; margin-top:10px; }
+  @media (max-width:920px){ .guide-grid{ grid-template-columns:1fr; } }
+  @media (max-width:520px){ .guide-steps li{ padding-left:60px; } }
+
   /* ---------------- FAQ (dunkel: das Goldband liegt wie der Flaggenstreifen dazwischen) ---------------- */
   .faq{ position:relative; overflow:hidden; background:var(--tief); color:var(--on-blue); padding:clamp(72px,10vw,128px) 0; --focus:var(--gold); }
   .faq > .wrap{ position:relative; }
@@ -522,7 +544,7 @@ const CONTENT = {
       {
         title: "Quellcode auf GitHub",
         tag: "offen", tone: "ok",
-        text: "Der komplette Code ist öffentlich einsehbar.",
+        text: "Der komplette Code des Tools ist öffentlich einsehbar.",
         linkLabel: "Auf GitHub ansehen",
         linkHref: "https://github.com/Nauru-Wlan/net-tool-dist"
       },
@@ -583,6 +605,20 @@ const CONTENT = {
     discordFallbackLabel: "Erst Fragen? Auf Discord melden"
   },
 
+  guide: {
+    heading: "Noch kein Krypto? So kommst du in fünf Schritten dorthin.",
+    text: "Du brauchst ein Konto bei einer Krypto-Börse. Dort tauschst du Euro gegen Litecoin und sendest ihn an die Adresse auf unserer Zahlungsseite. Plane beim ersten Mal etwas Zeit ein, vor allem wegen der Ausweisprüfung der Börse.",
+    note: "Die genannten Börsen sind Beispiele, keine Empfehlung. Wir haben keine Verbindung zu ihnen und bekommen nichts dafür. Börsen verlangen einen Ausweis, das gehört zu ihrem Geschäft.",
+    linkLabel: "Noch kein Krypto? Zur Anleitung",
+    steps: [
+      { title: "Konto bei einer Börse anlegen", text: "Wähle eine Börse, bei der du Euro einzahlen kannst, zum Beispiel Kraken, Bitvavo oder Bitpanda. Sie prüft deinen Ausweis. Das dauert je nach Anbieter Minuten bis einige Tage, erledige es also zuerst." },
+      { title: "Euro einzahlen", text: "Per SEPA-Überweisung oder mit Karte. Die Karte ist meist schneller, die Überweisung meist günstiger." },
+      { title: "Litecoin (LTC) kaufen", text: "Kaufe etwas mehr als 10 €, zum Beispiel für 14 €. Beim Senden zieht die Börse eine Gebühr ab, und der Kurs schwankt. Litecoin hat meist niedrige Netzwerkgebühren. Bitcoin und Solana gehen ebenfalls." },
+      { title: "Erst jetzt bei uns bestellen", text: "Klicke oben auf „Jetzt kaufen“ und wähle LTC. Die Zahlungsseite zeigt Adresse und Betrag. Starte die Bestellung erst, wenn das Litecoin auf der Börse liegt, denn die Rechnung läuft nach einer Frist ab." },
+      { title: "Litecoin senden", text: "Wähle in der Börse „Auszahlen“ oder „Senden“, Währung LTC, Netzwerk Litecoin. Füge Adresse und Betrag per Kopieren ein. Der volle Betrag muss nach der Börsengebühr ankommen, rechne die Gebühr also obendrauf. Kommt zu wenig an, sende den Rest an dieselbe Adresse. Danach lässt du die Seite offen: Schlüssel und Download erscheinen nach der Bestätigung von selbst." }
+    ]
+  },
+
   faq: {
     heading: "Häufige Fragen",
     items: [
@@ -604,7 +640,7 @@ const CONTENT = {
       },
       {
         q: "Ich habe noch keine Kryptowährung. Was jetzt?",
-        a: "Bezahlt wird ausschließlich in Krypto, andere Zahlungsarten wie Karte oder PayPal gibt es nicht. Du kannst Bitcoin, Litecoin oder Solana bei einer gängigen Krypto-Börse kaufen und von dort an die Adresse senden, die dir beim Kauf angezeigt wird. Achte darauf, den vollen Betrag anzuweisen: Netzwerkgebühren werden oft abgezogen, und eine zu kleine Zahlung gilt als unvollständig."
+        a: "Bezahlt wird ausschließlich in Krypto, andere Zahlungsarten wie Karte oder PayPal gibt es nicht. Du kannst Bitcoin, Litecoin oder Solana bei einer gängigen Krypto-Börse kaufen und von dort an die Adresse senden, die dir beim Kauf angezeigt wird. Achte darauf, den vollen Betrag anzuweisen: Netzwerkgebühren werden oft abgezogen, und eine zu kleine Zahlung gilt als unvollständig. Eine Schritt-für-Schritt-Anleitung findest du direkt unter dem Preis."
       },
       {
         q: "Kann ich den Schlüssel weitergeben?",
@@ -772,8 +808,20 @@ const CONTENT = {
       <div class="price-note" id="pricing-note"></div>
       <button class="btn btn-ink" id="pricing-cta" type="button"></button>
       <p class="buy-error" id="buy-error" role="alert"></p>
+      <a class="fallback guide-link" id="pricing-guide-link" href="#krypto-hilfe"></a>
       <a class="fallback" id="pricing-discord-fallback" target="_blank" rel="noopener"></a>
     </div>
+  </div>
+</section>
+
+<section class="guide" id="krypto-hilfe">
+  <div class="wrap guide-grid">
+    <div>
+      <h2 id="guide-heading"></h2>
+      <p class="text" id="guide-text"></p>
+      <p class="guide-note" id="guide-note"></p>
+    </div>
+    <ol class="guide-steps" id="guide-steps"></ol>
   </div>
 </section>
 
@@ -945,6 +993,21 @@ const CONTENT = {
     d.children[0].textContent = item.q; d.children[1].textContent = item.a;
     $('faq-list').appendChild(d);
   });
+
+  /* ---------- Krypto-Anleitung ---------- */
+  (function(){
+    const G = C.guide;
+    $('guide-heading').textContent = G.heading;
+    $('guide-text').textContent = G.text;
+    $('guide-note').textContent = G.note;
+    $('pricing-guide-link').textContent = G.linkLabel;
+    G.steps.forEach(s => {
+      const li = document.createElement('li');
+      li.innerHTML = '<h3></h3><p></p>';
+      li.children[0].textContent = s.title; li.children[1].textContent = s.text;
+      $('guide-steps').appendChild(li);
+    });
+  })();
 
   /* ---------- Kaufen: legt die Bestellung an und leitet zur Zahlung weiter ---------- */
   (function(){
